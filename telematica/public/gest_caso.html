@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GESTIONAR CASO</title>
+    <H1>GESTIONAR CASO</H1>
+</head>
+<body>
+    <form action="gest_caso" method="POST">
+    <text>Búsqueda de caso: ID o nombre, cédula del paciente <br><input id="nombre" name="nombre" placeholder="Click para editar"></text><br><br>
+      
+    </form>
+    <text>
+        Nombre: <text id="txtnombre"></text>
+    </text><br><br>
+    <text>
+        Apellido: <text id="txtapellido"></text>
+    </text><br><br>
+    <text>
+        Cédula: <text id="txtcedula"></text>
+    </text><br><br>
+
+    <text>
+        Sexo: <text id="txtsexo"></text>
+    </text><br><br>
+
+    <text>
+        Fecha de nacimiento: <text id="txtfech_na"></text>
+    </text><br><br>
+
+    <text>
+        Dirección de residencia: <text id="txtresi"></text>
+    </text><br><br>
+
+    <text>
+        Dirección de trabajo: <text id="txttrab"></text>
+    </text><br><br>
+
+    <text>
+        Resultado del Examen: <text id="txtexa"></text>
+    </text><br><br>
+    <text>
+       Fecha del Examen: <text id="txtfech_ex"></text>
+    </text><br><br>
+
+    <button  onclick="obtenerCaso()">Obtener Caso</button>
+      <script src="script.js"></script>
+</body>
+</html>

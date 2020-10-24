@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <h1>REGISTRO DE CASO (AYUDANTE)</h1>
+    <link rel="stylesheet" href="jquery/jquery.datetimepicker.min.css">
+</head>
+<body>
+    <form action="/logeado_ayudante" method="POST">
+        <text>Nombre Usuario: <br><input id="nombre" name="nombre" placeholder="Click para editar"></text><br><br>
+        <text>Apellido Usuario: <br><input id="apellido" name="apellido" placeholder="Click para editar"></text><br><br>
+        <text>Cédula Usuario: <br><input id="cedula" name="cedula" placeholder="Click para editar"></text><br><br>
+        <p>
+            Sexo:<br>
+            <input type="radio" name="sexo" value="masculino" id="masculino"> Masculino
+            <input type="radio" name="sexo" value="femenino" id="femenino"> Femenino
+            
+          </p>
+        <text>Fecha de nacimiento: <br><input id="fecha_nac" name="fecha_nac" placeholder="Click para editar"></text><br><br>
+        <text>Dirección Residencia: <br><input id="direccion" name="direccion" placeholder="Click para editar"></text><br><br>
+        <text>Dirección Trabajo: <br><input id="trabajo" name="trabajo" placeholder="Click para editar"></text><br><br>
+        <p>
+            Resultado Examen:<br>
+            <input type="radio" name="examen" value="positivo" id="positivo"> Positivo
+            <input type="radio" name="examen" value="negativo" id="negativo"> Negativo
+            
+          </p>
+        <text>Fecha examen: <br><input id="fecha_examen" name="fecha_examen" placeholder="Click para editar"></text><br><br>
+        <input type="button" onclick="cambia_login();" value="Login" />
+        <input type="button" onclick="gestCaso();" value="gestionar caso" />
+        <input type="submit" value="enviar">
+    </form>
+
+
+
+
+<script src="script.js"></script>
+<script src="jquery/jquery.js"></script>
+<script src="jquery/jquery.datetimepicker.full.js"></script>
+<script>
+  $("#fecha_examen").datetimepicker({
+    theme:'dark',
+    defaultTime: '00:00',
+    timepicker: false
+  });
+  $("#fecha_nac").datetimepicker({
+    theme:'dark',
+    defaultTime: '00:00',
+    timepicker: false
+  });
+
+</script>
+</body>
+</html>
