@@ -8,17 +8,17 @@
 </head>
 <body>
 <form action="/form" method="POST">
-    <text>Nombre Usuario: <br><input id="nombre" name="nombre" placeholder="Click para editar"></text><br><br>
-    <text>Apellido Usuario: <br><input id="apellido" name="apellido" placeholder="Click para editar"></text><br><br>
-    <text>Cédula Usuario: <br><input id="cedula" name="cedula" placeholder="Click para editar"></text><br><br>
+    <text>Nombre Usuario: <br><input id="nombre" name="nombre" placeholder="Click para editar" required></text><br><br>
+    <text>Apellido Usuario: <br><input id="apellido" name="apellido" placeholder="Click para editar" required></text><br><br>
+    <text>Cédula Usuario: <br><input id="cedula" name="cedula" placeholder="Click para editar" required></text><br><br>
     <p>
-        Rol:<br>
-        <input type="radio" name="rol" value="medico" id="medico"> Médico
+        Rol: <br>
+        <input type="radio" name="rol" value="medico" id="medico" checked="checked"> Médico
         <input type="radio" name="rol" value="ayudante" id="ayudante"> Ayudante
         <input type="radio" name="rol" value="admin" id="admin"> Admin
       </p>
-    <text>Usuario: <br><input id="usuario" name="usuario" placeholder="Click para editar"></text><br><br>
-    <text>Contraseña: <br><input id="contraseña" name="contraseña" placeholder="Click para editar"></text><br><br>
+    <text>Usuario: <br><input id="usuario" name="usuario" placeholder="Click para editar" required></text><br><br>
+    <text>Contraseña: <br><input id="contraseña" name="contraseña" placeholder="Click para editar" required></text><br><br>
     <input type="button" onclick="cambia_login();" value="Login" />
     <input type="submit" value="enviar">
 </form>

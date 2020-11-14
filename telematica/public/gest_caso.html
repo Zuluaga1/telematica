@@ -8,7 +8,7 @@
 </head>
 <body>
     <form action="gest_caso" method="POST">
-    <text>Búsqueda de caso: ID o nombre, cédula del paciente <br><input id="nombre" name="nombre" placeholder="Click para editar"></text><br><br>
+    <text>Búsqueda de caso: ID o nombre, cédula del paciente <br><input id="nombre" name="nombre" placeholder="Click para editar" required></text><br><br>
       
     </form>
     <text>
@@ -45,6 +45,20 @@
     </text><br><br>
 
     <button  onclick="obtenerCaso()">Obtener Caso</button>
-      <script src="script.js"></script>
+
+      <form action="/estado" method="post">
+      <p>
+        Actualizar Estado:<br>
+        <input type="radio" name="estado" value="casa" id="casa"> En Tratamiento Casa
+        <input type="radio" name="estado" value="hospital" id="hospital"> En tratamiento Hospital
+        <input type="radio" name="estado" value="uci" id="uci"> En UCI
+        <input type="radio" name="estado" value="curado" id="curado"> Curado
+        <input type="radio" name="estado" value="muerte" id="muerte"> Muerte
+      </p>
+      <input type="submit" value="Actualizar Estado">
+      <button  onclick="estado_act()">act</button>
+    </form>
+      
+      <script src="script.js"></script>   
 </body>
 </html>

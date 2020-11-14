@@ -41,13 +41,10 @@ app.get('/acceder', function(request, response) {
     response.sendFile(path.join(__dirname + '/public/login.html'));
     //console.log(__dirname + '/public/login.html')
 });
-/* app.get('/form', (req, res) => {
-    //res.render("index")
-    }); */
 
 app.post('/form', (req, res) => {
     //let nombre1=req.body.nombre1;
-    //console.log(usuario);
+    //console.log(req.body);
     database.connect(function(err) {
         let post = {nombre: req.body.nombre, apellido: req.body.apellido, cedula: req.body.cedula, rol: req.body.rol, usuario: req.body.usuario, contraseña: req.body.contraseña}; 
         let sql = 'INSERT INTO user SET ?';
@@ -65,17 +62,38 @@ app.post('/form', (req, res) => {
 
 });
 
+app.post('/estado', (req, res) => {
+    //let nombre1=req.body.nombre1;
+    console.log(req.body.estado);
+
+    let currentTime = new Date();
+    database.connect(function(err) {
+        let post = {fecha: currentTime, estado: req.body.estado}; 
+        let sql = 'INSERT INTO estado SET ?';
+        database.query(sql,post, function (err, result) {
+          if (err) throw err;
+          console.log("1 record inserted");
+          //console.log(post.nombre)
+          
+          //const password=post.contraseña;
+        });
+       
+
+    });
+    
+        });
+       
+    
+
+
         
 app.post('/login', (req, res) => {
     
     var username =req.body.usuarios;
     var password =req.body.contraseñas;
-   
-
-    
     //console.log(req.body);
     const medico = "medico";
-    const ayudante = "ayudante";    //database.query('SELECT usuario, contraseña FROM user',[username, password], function(error, results, fields) {
+    const ayudante = "ayudante";    
         //console.log(results);
     //});
     if (username && password) {
@@ -121,9 +139,7 @@ app.get('/logeado_ayudante', function(request, response) {
         return response.sendFile(path.join(__dirname + '/public/registro.html'));
 	} else {
         return response.sendFile(path.join(__dirname + '/public/login.html'));
-	}
-    
-    
+	} 
 });
 
 

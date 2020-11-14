@@ -27,9 +27,18 @@ function obtenerCaso(){
     
     caso = asincrono(caso);
     console.log(caso)
-    
-
 }
+function estado_act(){
+    var nombre = document.getElementById("txtnombre").value;
+    var apellido = document.getElementById("txtapellido").value;
+    nombrec= nombre + apellido
+    actua ={nombre: nombrec };
+    
+    
+    caso = asincrono(actua);
+    console.log(caso)
+}
+
 
 async function asincrono(caso){
     const options = {
@@ -40,11 +49,12 @@ async function asincrono(caso){
         }
     };
     const response = await fetch('/gest_caso', options);
-    const data = await response.json();
-    console.log(data[0].nombre);
+     data = await response.json();
+    //console.log(data[0].nombre);
     /* data[0].forEach(object => {
         data.push({ nombre: object.nombre, apellido: object.apellido});
     }); */
+
     document.getElementById("txtnombre").innerHTML = data[0].nombre;
     document.getElementById("txtapellido").innerHTML = data[0].apellido;
     document.getElementById("txtcedula").innerHTML = data[0].cedula;
@@ -54,6 +64,7 @@ async function asincrono(caso){
     document.getElementById("txttrab").innerHTML = data[0].trabajo;
     document.getElementById("txtexa").innerHTML = data[0].examen;
     document.getElementById("txtfech_ex").innerHTML = data[0].fecha_examen;
+
     return data
     
 }
