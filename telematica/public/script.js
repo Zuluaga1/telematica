@@ -1,5 +1,4 @@
-var mostrar, data, estado, hola ;
-var cedula=[];
+var mostrar, data;
 function cambia_register(){
    
     location.href="/"
@@ -20,30 +19,6 @@ function gestCaso(){
     location.href="/gest_caso"
 }
 var caso;
-function ACT(){
-    cedula = document.getElementById("txtcedula").innerHTML;
-    cedula ={cedula: cedula};
-    hola = act(cedula);
-    /* console.log(hola[0]);
-    document.getElementById("actu").innerHTML =JSON.stringify(hola, null, 4); */
-    //cedula[6].id + "," +cedula[6].cedula + "," + cedula[6].fecha;
-
-}
-async function act(cedula){
-    const options = {
-        method: "POST",
-        body: JSON.stringify(cedula),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    };
-    const response = await fetch('/cedula', options);
-     estado = await response.json();
-
-
-    return estado
-    
-}
 
 function obtenerCaso(){
     var caso1 = document.getElementById("nombre").value;
@@ -51,37 +26,17 @@ function obtenerCaso(){
     
     
     caso = asincrono(caso);
-    //console.log(caso)
+    console.log(caso)
 }
-
 function estado_act(){
-    var nombre = document.getElementById("txtnombre").innerHTML;
-    var apellido = document.getElementById("txtapellido").innerHTML;
-    var cedula = document.getElementById("txtcedula").innerHTML;
-    var estado = document.getElementById("menu1").value;
-
-    nombrec= nombre + apellido;
-    actua ={id:cedula, estado:estado};
-   
+    var nombre = document.getElementById("txtnombre").value;
+    var apellido = document.getElementById("txtapellido").value;
+    nombrec= nombre + apellido
+    actua ={nombre: nombrec };
     
-    caso = asincrono1(actua);
     
-}
-
-async function asincrono1(actua){
-    const options = {
-        method: "POST",
-        body: JSON.stringify(actua),
-        headers: {
-            "Content-Type": "application/json"
-        }
-    };
-    const response = await fetch('/estado', options);
-     estado = await response.json();
-
-
-    return estado
-    
+    caso = asincrono(actua);
+    console.log(caso)
 }
 
 
@@ -94,7 +49,7 @@ async function asincrono(caso){
         }
     };
     const response = await fetch('/gest_caso', options);
-     data = await response.json();  
+     data = await response.json();
     //console.log(data[0].nombre);
     /* data[0].forEach(object => {
         data.push({ nombre: object.nombre, apellido: object.apellido});

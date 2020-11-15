@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MODULO DE VISUALIZACION (MEDICO)</title>
+    <style>
+         #map {
+                height: 80%;
+                width: 80%;
+                position:absolute;
+                top: 0;
+                left: 0;
+                z-index: 0;
+            }
+   </style>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+</head>
+
+<body>
+    <div style="position:absolute; top:60px; left:0px; z-index:5; width:350px; height:500px; background-color:#CDCDCD; opacity:0.9">
+
+        <form
+            style="position:absolute; top:45px; left:5px; z-index: 10;"
+            name="formulario_fecha" id="formulario_fecha">
+
+            <input type="button" value="Busqueda" id="historia" onclick="initMap()">
+            <input type="button" value="Ubicacion en vivo" id="live" onclick="show2(),clearform(), hideForm(), livevalues()">
+
+        </form>
+
+        <font color=#000000>
+            <h1 style= "font-size:0.8cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:0.2cm; top: -10px;" ><i>LOCATION</i></h1>
+
+            <h2 style= "font-size:0.5cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:0.7cm; top: 70px;" ><i>Camion 1</i></h2>
+            <h2 style= "font-size:0.5cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:5.5cm; top: 70px;" ><i>Camion 2</i></h2>
+
+            <h2 style= "font-size:0.5cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:0.8cm; top: 95px;" ><i>Latitud:</i></h2>
+            <h2 style= "font-size:0.5cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:5.8cm; top: 95px;" ><i>Latitud:</i></h2>
+
+            <h2 style= "font-size:0.4cm;font-family:'Times New Roman', Times, serif; position:absolute; z-index: 10; left:0.2cm; top: 105px;" ><p id="lat"></p></h2>
+            <h2 style= "font-size:0.4cm;font-family:'Times New Roman', Times, serif; position:absolute; z-index: 10; left:5.2cm; top: 105px;" ><p id="lat2"></p></h2>
+
+            <h3 style= "font-size:0.5cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:0.7cm; top: 140px;" ><i>Longitud:</i></h3>
+            <h3 style= "font-size:0.5cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:5.5cm; top: 140px;" ><i>Longitud:</i></h3>
+
+            <h3 style= "font-size:0.4cm;font-family:'Times New Roman', Times, serif; position:absolute; z-index: 10; left:0.2cm; top: 150px;" ><p id="long"></p></h3>
+            <h3 style= "font-size:0.4cm;font-family:'Times New Roman', Times, serif; position:absolute; z-index: 10; left:5.2cm; top: 150px;" ><p id="long2"></p></h3>
+
+            <h4 style= "font-size:0.5cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:0.7cm; top: 185px;" ><i>X/Y/Z Axis:</i></h4>
+            <h4 style= "font-size:0.5cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:5.5cm; top: 185px;" ><i>X/Y/Z Axis:</i></h4>
+            
+            <h4 style= "font-size:0.4cm;font-family:'Times New Roman', Times, serif; position:absolute; z-index: 10; left:0.2cm; top: 200px;" ><p id="axis"></p></h4>
+            <h4 style= "font-size:0.4cm;font-family:'Times New Roman', Times, serif; position:absolute; z-index: 10; left:5.2cm; top: 200px;" ><p id="axis2"></p></h4>
+
+            <h4 style= "font-size:0.5cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:0.7cm; top: 230px;" ><i>Timestamp:</i></h4>
+            <h4 style= "font-size:0.5cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:5.5cm; top: 230px;" ><i>Timestamp:</i></h4>
+            
+            <h4 style= "font-size:0.4cm;font-family:'Times New Roman', Times, serif; position:absolute; z-index: 10; left:0.2cm; top: 250px;" ><p id="timestamp"></p></h4>
+            <h4 style= "font-size:0.4cm;font-family:'Times New Roman', Times, serif; position:absolute; z-index: 10; left:5.2cm; top: 250px;" ><p id="timestamp2"></p></h4>
+        
+        </font>
+
+        <form
+            style="display: block; position:absolute; top:305px; left:10px; z-index: 10;"
+            name="form_fecha" id="form_fecha" autocomplete="off" target="dummyframe" >
+
+            <label for="inicio"> Ingrese Cédula del paciente o el ID del caso:</label>
+            <input type="text" id="fname" name="fname" required><br>
+            <input type="submit" value="Submit" id="btnSubmit" onclick="validate()">
+        </form>
+    </div>
+
+    <div id="map">
+    </div>
+
+    <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+
+    <script>
+
+        var map;
+        var geocoder;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'),{
+                zoom: 12, center: {lat:10.949185 ,lng: -74.803391},
+                streetViewControl: false
+            });
+            geocoder = new google.maps.Geocoder();
+        }
+    
+        async function validate(){
+            if (document.getElementById('fname').value == ""){
+
+            }else {
+
+                var con = document.getElementById('fname').value;
+                const consulta = {con:con};
+                const options1 = {
+                method: "POST",
+                    body: JSON.stringify(consulta),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                };
+                const response1 = await fetch('/mapaplan', options1);
+                result = await response1.json();
+
+                console.log(result);
+
+                if (Array.isArray(result) && result.length) {
+                    condicion1=true;
+                } else {
+                    condicion1=false;
+                }
+
+                var address = result[0].direccion;
+                var address1 = result[0].trabajo;
+                geocoder.geocode( { 'address': address}, function(results1, status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        map.setCenter(results1[0].geometry.location);
+                        var marker = new google.maps.Marker({
+                                map: map,
+                                position: results1[0].geometry.location
+                        });
+                    } else {
+                            alert('Geocode was not successful for the following reason: ' + status);
+                    }
+                });
+                        geocoder.geocode( { 'address': address1}, function(results2, status) {
+                            if (status == google.maps.GeocoderStatus.OK) {
+                                map.setCenter(results2[0].geometry.location);
+                                var marker = new google.maps.Marker({
+                                    map: map,
+                                    position: results2[0].geometry.location
+                                });
+                            } else {
+                                alert('Geocode was not successful for the following reason: ' + status);
+                            }
+                        });
+                    
+
+                
+
+            }
+        
+            
+
+        }
+        function showForm() {
+            document.getElementById('form_fecha').style.display = 'block';
+        }
+        function show2() {
+            document.getElementById('menu1').style.display = 'block';
+            myVar1 =true;
+        }
+        function clearform(){
+            document.getElementById("lat").innerHTML = '';
+            document.getElementById("long").innerHTML = '';
+            document.getElementById("timestamp").innerHTML = '';
+            document.getElementById("axis").innerHTML = '';
+            document.getElementById("lat2").innerHTML = '';
+            document.getElementById("long2").innerHTML = '';
+            document.getElementById("timestamp2").innerHTML = '';
+            document.getElementById("axis2").innerHTML = '';
+        }
+        function hideForm() {
+            document.getElementById('form_fecha').style.display = 'none';
+        }
+        function hide2() {
+            document.getElementById('menu1').style.display = 'none';
+            myVar1 = false;
+        }
+    
+    </script>
+
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZFxENpr18VouKnGzRAxHJX4aOGoAXJpY&callback=initMap">
+    </script>
+</body>
+</html>

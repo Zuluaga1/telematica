@@ -22,20 +22,20 @@ app.use(express.json());
 
 // Credentials for connecting the database
 const database = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
+    host: "covid.cvsabxwakxjs.us-east-1.rds.amazonaws.com",
+    user: "ADDBPFT",
+    password: "pftele08",
     database: "covid",
-    port:   "8111"
+    //port:   "8111"
 });
 
 //connect
-database.connect((err) => {
+/* database.connect((err) => {
     if (err){
         throw err;
     }    
     console.log('Mysql Connected...');
-}); 
+});  */
 //dirección para el logeo
 app.get('/acceder', function(request, response) {
     response.sendFile(path.join(__dirname + '/public/login.html'));
@@ -64,11 +64,11 @@ app.post('/form', (req, res) => {
 
 app.post('/estado', (req, res) => {
     //let nombre1=req.body.nombre1;
-    console.log(req.body);
+    console.log(req.body.estado);
 
     let currentTime = new Date();
     database.connect(function(err) {
-        let post = {cedula: req.body.id, fecha: currentTime, estado: req.body.estado}; 
+        let post = {fecha: currentTime, estado: req.body.estado}; 
         let sql = 'INSERT INTO estado SET ?';
         database.query(sql,post, function (err, result) {
           if (err) throw err;
@@ -82,26 +82,6 @@ app.post('/estado', (req, res) => {
     });
     
         });
-        app.post('/cedula', (req, res) => {
-            //let nombre1=req.body.nombre1;
-            console.log(req.body);
-        
-            
-            database.connect(function(err) {
-                let sql = `SELECT * FROM estado WHERE cedula LIKE '${req.body.cedula}'`;
-               
-                let query = database.query(sql, (err, results) => { 
-                  if (err) throw err;
-                  console.log(results);
-                  //console.log(post.nombre)
-                  res.end(JSON.stringify(results)); 
-                  //const password=post.contraseña;
-                });
-                //res.end(JSON.stringify(results)); 
-        
-            });
-            
-                });
        
     
 
@@ -197,12 +177,11 @@ app.get('/logeado_ayudante', function(request, response) {
 
 app.get('/logeado_medico', function(request, response) {
 	if (request.session.loggedin) {
-        response.send('Eres medico, ' + request.session.username + '!');
+        return response.sendFile(path.join(__dirname + '/public/logeado_medico.html'));
         
 	} else {
         return response.sendFile(path.join(__dirname + '/public/login.html'));
 	}
-	response.end();
 });
 
 app.get('/gest_caso', function(request, response) {
@@ -220,7 +199,7 @@ app.get('/gest_caso', function(request, response) {
 app.post('/gest_caso', (req, res) => {
     
     var nombre = req.body.caso1;
-    //console.log(req.body);
+    console.log(req.body);
     //var param = req.body.caso1;
     let sql = `SELECT * FROM registro_caso WHERE nombre LIKE '${nombre}' OR id LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
     let query = database.query(sql, (err, results) => { 
@@ -231,7 +210,19 @@ app.post('/gest_caso', (req, res) => {
         }else{
             res.send('Incorrect Username and/or Password!');
            }
-           //console.log(results)
+           console.log(results)
            res.end(JSON.stringify(results));       
    });
+});
+
+app.post('/mapaplan', (req, res) => {
+    var nombre = req.body.con;
+    console.log(req.body);
+
+    let sql = `SELECT direccion, trabajo FROM registro_caso WHERE id LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
+    let query = database.query(sql, (err, result) => {
+        if(err){ throw err;}
+        res.end(JSON.stringify(result));
+        console.log(result)    
+    });
 });
