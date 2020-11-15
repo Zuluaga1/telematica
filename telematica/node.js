@@ -64,11 +64,11 @@ app.post('/form', (req, res) => {
 
 app.post('/estado', (req, res) => {
     //let nombre1=req.body.nombre1;
-    console.log(req.body.estado);
+    console.log(req.body);
 
     let currentTime = new Date();
     database.connect(function(err) {
-        let post = {fecha: currentTime, estado: req.body.estado}; 
+        let post = {cedula: req.body.id, fecha: currentTime, estado: req.body.estado}; 
         let sql = 'INSERT INTO estado SET ?';
         database.query(sql,post, function (err, result) {
           if (err) throw err;
@@ -82,6 +82,26 @@ app.post('/estado', (req, res) => {
     });
     
         });
+        app.post('/cedula', (req, res) => {
+            //let nombre1=req.body.nombre1;
+            console.log(req.body);
+        
+            
+            database.connect(function(err) {
+                let sql = `SELECT * FROM estado WHERE cedula LIKE '${req.body.cedula}'`;
+               
+                let query = database.query(sql, (err, results) => { 
+                  if (err) throw err;
+                  console.log(results);
+                  //console.log(post.nombre)
+                  res.end(JSON.stringify(results)); 
+                  //const password=post.contraseña;
+                });
+                //res.end(JSON.stringify(results)); 
+        
+            });
+            
+                });
        
     
 
@@ -200,7 +220,7 @@ app.get('/gest_caso', function(request, response) {
 app.post('/gest_caso', (req, res) => {
     
     var nombre = req.body.caso1;
-    console.log(req.body);
+    //console.log(req.body);
     //var param = req.body.caso1;
     let sql = `SELECT * FROM registro_caso WHERE nombre LIKE '${nombre}' OR id LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
     let query = database.query(sql, (err, results) => { 
@@ -211,7 +231,7 @@ app.post('/gest_caso', (req, res) => {
         }else{
             res.send('Incorrect Username and/or Password!');
            }
-           console.log(results)
+           //console.log(results)
            res.end(JSON.stringify(results));       
    });
 });
