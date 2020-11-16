@@ -55,17 +55,12 @@ app.post('/form', (req, res) => {
           
           //const password=post.contraseña;
         });
-       
-
     });
-    
-
 });
 
 app.post('/estado', (req, res) => {
     //let nombre1=req.body.nombre1;
     console.log(req.body.estado);
-
     let currentTime = new Date();
     database.connect(function(err) {
         let post = {fecha: currentTime, estado: req.body.estado}; 
@@ -77,16 +72,9 @@ app.post('/estado', (req, res) => {
           
           //const password=post.contraseña;
         });
-       
-
-    });
-    
-        });
-       
-    
-
-
-        
+    });  
+});
+     
 app.post('/login', (req, res) => {
     
     var username =req.body.usuarios;
@@ -155,8 +143,6 @@ app.post('/logeado_ayudante', (req, res) => {
           
           //const password=post.contraseña;
         });
-       
-
     });
 });
 
@@ -171,8 +157,6 @@ app.get('/logeado_ayudante', function(request, response) {
     
     
 });
-
-
 
 
 app.get('/logeado_medico', function(request, response) {
@@ -219,7 +203,21 @@ app.post('/mapaplan', (req, res) => {
     var nombre = req.body.con;
     console.log(req.body);
 
-    let sql = `SELECT direccion, trabajo FROM registro_caso WHERE idCaso LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
+    let sql = `SELECT * FROM registro_caso WHERE idCaso LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
+    let query = database.query(sql, (err, result) => {
+        if(err){ throw err;}
+        res.end(JSON.stringify(result));
+        console.log(result)    
+    });
+});
+
+app.post('/mapaplan2', (req, res) => {
+    var idcaso = req.body.con;
+    console.log(req.body);
+
+    let sql = `SELECT es.fecha, con.estado
+                FROM estado es, condicion con
+                WHERE es.idcaso = '${idcaso}' AND es.estado = con.idcondicion`;
     let query = database.query(sql, (err, result) => {
         if(err){ throw err;}
         res.end(JSON.stringify(result));
