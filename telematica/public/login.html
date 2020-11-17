@@ -1,6 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="node.js"></script>
+    <script type="text/javascript">
+    x= [];
+    val1=0;
+    val2=2;
+
+    /* const mysql = require('mysql');
+
+    const database = mysql.createConnection({
+    host: "covid.cvsabxwakxjs.us-east-1.rds.amazonaws.com",
+    user: "ADDBPFT",
+    password: "pftele08",
+    database: "covid",
+    port:   "3306"
+});
+
+//connect
+database.connect((err) => {
+    if (err){
+        throw err;
+    }    
+    console.log('Mysql Connected...');
+}); */
+    
+    /* let sql1 = `SELECT  rc.examen, COUNT(rc.examen) FROM registro_caso rc GROUP by rc.examen`;
+    let query1 = database.query(sql1, (err, result) => {
+    if (err) { throw err; }
+    console.log(result);
+
+    for (let i = 0; i < result.length; i++) {
+        var re = result[i];
+        x[i] = re['COUNT(rc.examen)']
+    }
+    val1 = x[0];
+    val2 = x[1];
+    console.log(val1)
+    console.log(val2)
+    });  */
+    
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+
+        var data = google.visualization.arrayToDataTable([
+            ['Condición', 'Cantidad'],
+            ['Curados', 8],  
+            ['Infectados', 4],
+            ['Muertos', 2]
+        ]);
+
+        var options = {
+          title: 'Casos totales'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart2);
+
+      function drawChart2() {
+
+        var data2 = google.visualization.arrayToDataTable([
+          ['Condición', 'Cantidad'],
+          ['Tratamiento - Casa',      4],
+          ['Tratamiento - Hospital',      2],
+          ['UCI',      4],
+          ['Muertos',      2]
+        ]);
+
+        var options2 = {
+          title: 'Casos de infectados'
+        };
+
+        var chart2 = new google.visualization.PieChart(document.getElementById('piechart2'));
+
+        chart2.draw(data2, options2);
+      }
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart3);
+
+      function drawChart3() {
+
+        var data3 = google.visualization.arrayToDataTable([
+          ['Resultado', 'Cantidad'],
+          ['Positivos', val1],
+          ['Negativos', val2]
+        ]);
+
+        var options3 = {
+          title: 'Resultados'
+        };
+
+        var chart3 = new google.visualization.PieChart(document.getElementById('piechart3'));
+
+        chart3.draw(data3, options3);
+      }
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
@@ -8,11 +111,14 @@
 </head>
 <body>
     <form action="/login" method="post">
-        <text>Usuario: <br><input id="usuario1" name="usuarios" placeholder="Click para editar"></text><br><br>
+    <text>Usuario: <br><input id="usuario1" name="usuarios" placeholder="Click para editar"></text><br><br>
     <text>Contraseña: <br><input id="contraseña1" name="contraseñas" placeholder="Click para editar"></text><br><br>
     <input type="submit" value="enviar1">
     <input type="button" onclick="cambia_register();" value="register" />
     </form>
+    <div id="piechart" style="width: 900px; height: 500px;"></div>
+    <div id="piechart2" style="width: 900px; height: 500px;"></div>
+    <div id="piechart3" style="width: 900px; height: 500px;"></div>
 
     <script src="script.js"></script>
 </body>

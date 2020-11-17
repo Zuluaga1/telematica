@@ -22,11 +22,11 @@ app.use(express.json());
 
 // Credentials for connecting the database
 const database = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
+    host: "covid.cvsabxwakxjs.us-east-1.rds.amazonaws.com",
+    user: "ADDBPFT",
+    password: "pftele08",
     database: "covid",
-    port:   "8111"
+    port:   "3306"
 });
 
 //connect
@@ -235,3 +235,22 @@ app.post('/gest_caso', (req, res) => {
            res.end(JSON.stringify(results));       
    });
 });
+
+/* x= [];
+var val1=0;
+var val2=0;
+
+let sql1 = `SELECT  rc.examen, COUNT(rc.examen) FROM registro_caso rc GROUP by rc.examen`;
+let query1 = database.query(sql1, (err, result) => {
+    if (err) { throw err; }
+    console.log(result);
+
+    for (let i = 0; i < result.length; i++) {
+        var re = result[i];
+        x[i] = re['COUNT(rc.examen)']
+    }
+    var val1 = x[0];
+    var val2 = x[1];
+    console.log(val1)
+    console.log(val2)
+}); */
