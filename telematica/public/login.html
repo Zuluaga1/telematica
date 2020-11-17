@@ -1,19 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src='/socket.io/socket.io.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <h1>LOGIN</h1>
+    <script>
+      var socket = io.connect('http://localhost:80');
+    </script>
+    <script type="text/javascript">
+
+      var query = "SELECT  rc.examen, COUNT(rc.examen) AS Total FROM registro_caso rc GROUP by rc.examen";
+      socket.emit('post',query);
+
+    </script>
 </head>
 <body>
     <form action="/login" method="post">
-        <text>Usuario: <br><input id="usuario1" name="usuarios" placeholder="Click para editar"></text><br><br>
-    <text>Contraseña: <br><input id="contraseña1" name="contraseñas" placeholder="Click para editar"></text><br><br>
-    <input type="submit" value="enviar1">
-    <input type="button" onclick="cambia_register();" value="register" />
+      <text>Usuario: <br><input id="usuario1" name="usuarios" placeholder="Click para editar"></text><br><br>
+      <text>Contraseña: <br><input id="contraseña1" name="contraseñas" placeholder="Click para editar"></text><br><br>
+      <input type="submit" value="enviar1">
+      <input type="button" onclick="cambia_register();" value="register" />
     </form>
-
+    <canvas id="myChart" style="width: 1366px; height: 200px;"></canvas>
+    <script>
+      socket.on('show', function(message) {
+        var ctx = document.getElementById('myChart');
+        var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ["Casos positivos", "Casos negativos"],
+          datasets: [{
+            data: [message[0], message[1]],
+            backgroundColor: ["#ff0000", "#008f39"]
+          }]
+        },
+        options: {
+          responsive: false,
+          title: {
+            display: true,
+            text: 'Piechart positive and negative',
+            lineHeight: 2,
+            fontSize: 25
+          }
+        }
+      });
+  });
+    </script>
     <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </body>
 </html>

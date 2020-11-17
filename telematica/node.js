@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 const bodyParser = require('body-parser');  
 const mysql = require('mysql');
 session = require('express-session');
@@ -7,7 +9,7 @@ const path = require('path');
 const passport= require('passport');
 const { json } = require('body-parser');
 app.use(bodyParser());
-app.listen(80);
+//app.listen(80);
 app.use(express.json({ limit: '1mb' }));
 //para poder acceder
 app.use(express.static('public'));
@@ -26,16 +28,17 @@ const database = mysql.createConnection({
     user: "ADDBPFT",
     password: "pftele08",
     database: "covid",
-    //port:   "8111"
+    port:   "3306"
 });
 
 //connect
-/* database.connect((err) => {
+database.connect((err) => {
     if (err){
         throw err;
     }    
     console.log('Mysql Connected...');
-});  */
+});
+
 //dirección para el logeo
 app.get('/acceder', function(request, response) {
     response.sendFile(path.join(__dirname + '/public/login.html'));
@@ -51,21 +54,14 @@ app.post('/form', (req, res) => {
         database.query(sql,post, function (err, result) {
           if (err) throw err;
           console.log("1 record inserted");
-          //console.log(post.nombre)
-          
-          //const password=post.contraseña;
         });
-       
-
     });
     
-
 });
 
 app.post('/estado', (req, res) => {
     //let nombre1=req.body.nombre1;
     console.log(req.body.estado);
-
     let currentTime = new Date();
     database.connect(function(err) {
         let post = {fecha: currentTime, estado: req.body.estado}; 
@@ -77,18 +73,11 @@ app.post('/estado', (req, res) => {
           
           //const password=post.contraseña;
         });
-       
-
     });
     
-        });
-       
-    
-
-
+});
         
 app.post('/login', (req, res) => {
-    
     var username =req.body.usuarios;
     var password =req.body.contraseñas;
     //console.log(req.body);
@@ -225,4 +214,57 @@ app.post('/mapaplan', (req, res) => {
         res.end(JSON.stringify(result));
         console.log(result)    
     });
+});
+
+app.post('/mapaplan2', (req, res) => {
+    var idcaso = req.body.con;
+    console.log(req.body);
+
+    let sql = `SELECT es.fecha, con.estado
+                FROM estado es, condicion con
+                WHERE es.idcaso = '${idcaso}' AND es.estado = con.idcondicion`;
+    let query = database.query(sql, (err, result) => {
+        if(err){ throw err;}
+        res.end(JSON.stringify(result));
+        console.log(result)    
+    });
+});
+
+app.post('/casos', (req, res) => {
+    let sql = req.body.con;
+    let query = database.query(sql, (err, result) => {
+        if(err){ throw err;}
+        res.end(JSON.stringify(result));
+        console.log(result)    
+    });
+});
+
+//Info Pagina principal
+io.on('connection', socket => {
+
+    socket.on('post', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                var val = Object.values(x)[1];
+                coord.push(val);
+            }
+                console.log(coord);
+              socket.emit('show', coord);
+
+            });
+    
+        });
+    });
+
+});
+
+server.listen(80, () => {
+    console.log("Servidor abierto en puerto 80");
 });
