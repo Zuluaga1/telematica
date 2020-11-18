@@ -1,5 +1,7 @@
 const express = require('express');
 const app = express();
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
 const bodyParser = require('body-parser');  
 const mysql = require('mysql');
 session = require('express-session');
@@ -7,7 +9,7 @@ const path = require('path');
 const passport= require('passport');
 const { json } = require('body-parser');
 app.use(bodyParser());
-app.listen(80);
+//app.listen(80);
 app.use(express.json({ limit: '1mb' }));
 //para poder acceder
 app.use(express.static('public'));
@@ -35,7 +37,8 @@ database.connect((err) => {
         throw err;
     }    
     console.log('Mysql Connected...');
-}); 
+});
+
 //dirección para el logeo
 app.get('/acceder', function(request, response) {
     response.sendFile(path.join(__dirname + '/public/login.html'));
@@ -51,24 +54,17 @@ app.post('/form', (req, res) => {
         database.query(sql,post, function (err, result) {
           if (err) throw err;
           console.log("1 record inserted");
-          //console.log(post.nombre)
-          
-          //const password=post.contraseña;
         });
-       
-
     });
     
-
 });
 
 app.post('/estado', (req, res) => {
     //let nombre1=req.body.nombre1;
-    console.log(req.body);
-
+    console.log(req.body.estado);
     let currentTime = new Date();
     database.connect(function(err) {
-        let post = {cedula: req.body.id, fecha: currentTime, estado: req.body.estado}; 
+        let post = {fecha: currentTime, estado: req.body.estado}; 
         let sql = 'INSERT INTO estado SET ?';
         database.query(sql,post, function (err, result) {
           if (err) throw err;
@@ -77,38 +73,11 @@ app.post('/estado', (req, res) => {
           
           //const password=post.contraseña;
         });
-       
-
     });
     
-        });
-        app.post('/cedula', (req, res) => {
-            //let nombre1=req.body.nombre1;
-            console.log(req.body);
-        
-            
-            database.connect(function(err) {
-                let sql = `SELECT * FROM estado WHERE cedula LIKE '${req.body.cedula}'`;
-               
-                let query = database.query(sql, (err, results) => { 
-                  if (err) throw err;
-                  console.log(results);
-                  //console.log(post.nombre)
-                  res.end(JSON.stringify(results)); 
-                  //const password=post.contraseña;
-                });
-                //res.end(JSON.stringify(results)); 
-        
-            });
-            
-                });
-       
-    
-
-
+});
         
 app.post('/login', (req, res) => {
-    
     var username =req.body.usuarios;
     var password =req.body.contraseñas;
     //console.log(req.body);
@@ -197,12 +166,11 @@ app.get('/logeado_ayudante', function(request, response) {
 
 app.get('/logeado_medico', function(request, response) {
 	if (request.session.loggedin) {
-        response.send('Eres medico, ' + request.session.username + '!');
+        return response.sendFile(path.join(__dirname + '/public/logeado_medico.html'));
         
 	} else {
         return response.sendFile(path.join(__dirname + '/public/login.html'));
 	}
-	response.end();
 });
 
 app.get('/gest_caso', function(request, response) {
@@ -220,7 +188,7 @@ app.get('/gest_caso', function(request, response) {
 app.post('/gest_caso', (req, res) => {
     
     var nombre = req.body.caso1;
-    //console.log(req.body);
+    console.log(req.body);
     //var param = req.body.caso1;
     let sql = `SELECT * FROM registro_caso WHERE nombre LIKE '${nombre}' OR id LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
     let query = database.query(sql, (err, results) => { 
@@ -231,26 +199,209 @@ app.post('/gest_caso', (req, res) => {
         }else{
             res.send('Incorrect Username and/or Password!');
            }
-           //console.log(results)
+           console.log(results)
            res.end(JSON.stringify(results));       
    });
 });
 
-/* x= [];
-var val1=0;
-var val2=0;
+app.post('/mapaplan', (req, res) => {
+    var nombre = req.body.con;
+    console.log(req.body);
 
-let sql1 = `SELECT  rc.examen, COUNT(rc.examen) FROM registro_caso rc GROUP by rc.examen`;
-let query1 = database.query(sql1, (err, result) => {
-    if (err) { throw err; }
-    console.log(result);
+    let sql = `SELECT * FROM registro_caso WHERE idCaso LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
+    let query = database.query(sql, (err, result) => {
+        if(err){ throw err;}
+        res.end(JSON.stringify(result));
+        console.log(result)    
+    });
+});
 
-    for (let i = 0; i < result.length; i++) {
-        var re = result[i];
-        x[i] = re['COUNT(rc.examen)']
-    }
-    var val1 = x[0];
-    var val2 = x[1];
-    console.log(val1)
-    console.log(val2)
-}); */
+app.post('/mapaplan2', (req, res) => {
+    var idcaso = req.body.con;
+    console.log(req.body);
+
+    let sql = `SELECT es.fecha, con.estado
+                FROM estado es, condicion con
+                WHERE es.idcaso = '${idcaso}' AND es.estado = con.idcondicion`;
+    let query = database.query(sql, (err, result) => {
+        if(err){ throw err;}
+        res.end(JSON.stringify(result));
+        console.log(result)    
+    });
+});
+
+app.post('/casos', (req, res) => {
+    let sql = req.body.con;
+    let query = database.query(sql, (err, result) => {
+        if(err){ throw err;}
+        res.end(JSON.stringify(result));
+        console.log(result)    
+    });
+});
+
+//Info Pagina principal
+io.on('connection', socket => {
+
+    socket.on('post', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                var val = Object.values(x)[1];
+                coord.push(val);
+            }
+                console.log(coord);
+              socket.emit('show', coord);
+
+            });
+    
+        });
+    });
+
+});
+
+io.on('connection', socket => {
+
+    socket.on('post2', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord2 = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                var val = Object.values(x)[1];
+                coord2.push(val);
+            }
+                console.log(coord2);
+              socket.emit('show2', coord2);
+
+            });
+    
+        });
+    });
+
+});
+
+io.on('connection', socket => {
+
+    socket.on('post3', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord3 = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                var val = Object.values(x)[1];
+                coord3.push(val);
+            }
+                console.log(coord3);
+              socket.emit('show3', coord3);
+
+            });
+    
+        });
+    });
+
+});
+
+io.on('connection', socket => {
+
+    socket.on('post4', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord4 = [];
+              var coord5 = [];
+              var coord6 = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                
+                var val = Object.values(x)[0];
+                val = val.toString();
+                var valc = val.split(' ');
+                
+                val = valc[1]+' '+valc[2]+' '+valc[3]; 
+                coord4.push(val);
+            }
+                console.log(coord4);
+              socket.emit('show4', coord4);
+
+            });
+    
+        });
+    });
+
+});
+
+io.on('connection', socket => {
+
+    socket.on('post4', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord4 = [];
+              var coord5 = [];
+              var coord6 = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                var val2 = Object.values(x)[1];
+                coord5.push(val2);
+            }
+                console.log(coord5);
+              socket.emit('show5', coord5);
+
+            });
+    
+        });
+    });
+
+});
+
+io.on('connection', socket => {
+
+    socket.on('post4', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord4 = [];
+              var coord5 = [];
+              var coord6 = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                var val3 = Object.values(x)[2];
+                coord6.push(val3);
+            }
+                console.log(coord6);
+              socket.emit('show6', coord6);
+
+            });
+    
+        });
+    });
+
+});
+
+
+server.listen(80, () => {
+    console.log("Servidor abierto en puerto 80");
+});

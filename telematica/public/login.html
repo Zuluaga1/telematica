@@ -2,124 +2,185 @@
 <html lang="en">
 <head>
     <script src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="node.js"></script>
-    <script type="text/javascript">
-    x= [];
-    val1=0;
-    val2=2;
-
-    /* const mysql = require('mysql');
-
-    const database = mysql.createConnection({
-    host: "covid.cvsabxwakxjs.us-east-1.rds.amazonaws.com",
-    user: "ADDBPFT",
-    password: "pftele08",
-    database: "covid",
-    port:   "3306"
-});
-
-//connect
-database.connect((err) => {
-    if (err){
-        throw err;
-    }    
-    console.log('Mysql Connected...');
-}); */
-    
-    /* let sql1 = `SELECT  rc.examen, COUNT(rc.examen) FROM registro_caso rc GROUP by rc.examen`;
-    let query1 = database.query(sql1, (err, result) => {
-    if (err) { throw err; }
-    console.log(result);
-
-    for (let i = 0; i < result.length; i++) {
-        var re = result[i];
-        x[i] = re['COUNT(rc.examen)']
-    }
-    val1 = x[0];
-    val2 = x[1];
-    console.log(val1)
-    console.log(val2)
-    });  */
-    
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-
-        var data = google.visualization.arrayToDataTable([
-            ['Condición', 'Cantidad'],
-            ['Curados', 8],  
-            ['Infectados', 4],
-            ['Muertos', 2]
-        ]);
-
-        var options = {
-          title: 'Casos totales'
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
-        chart.draw(data, options);
-      }
-
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart2);
-
-      function drawChart2() {
-
-        var data2 = google.visualization.arrayToDataTable([
-          ['Condición', 'Cantidad'],
-          ['Tratamiento - Casa',      4],
-          ['Tratamiento - Hospital',      2],
-          ['UCI',      4],
-          ['Muertos',      2]
-        ]);
-
-        var options2 = {
-          title: 'Casos de infectados'
-        };
-
-        var chart2 = new google.visualization.PieChart(document.getElementById('piechart2'));
-
-        chart2.draw(data2, options2);
-      }
-
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart3);
-
-      function drawChart3() {
-
-        var data3 = google.visualization.arrayToDataTable([
-          ['Resultado', 'Cantidad'],
-          ['Positivos', val1],
-          ['Negativos', val2]
-        ]);
-
-        var options3 = {
-          title: 'Resultados'
-        };
-
-        var chart3 = new google.visualization.PieChart(document.getElementById('piechart3'));
-
-        chart3.draw(data3, options3);
-      }
-    </script>
+    <script src='/socket.io/socket.io.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <h1>LOGIN</h1>
+    <script>
+      var socket = io.connect('http://localhost:80');
+    </script>
+    <script type="text/javascript">
+
+      var query = "SELECT  rc.examen, COUNT(rc.examen) AS Total FROM registro_caso rc GROUP by rc.examen";
+      socket.emit('post',query);
+
+      var query2 = "SELECT  e.estado, COUNT(e.estado) AS Total FROM condicion c, estado e WHERE e.estado=c.idcondicion GROUP by e.estado";
+      socket.emit('post2',query2);
+
+      var query3 = "SELECT  e.estado, COUNT(e.estado) AS Total FROM condicion c, estado e WHERE e.estado=c.idcondicion GROUP by e.estado";
+      socket.emit('post3',query3);
+
+      var query4= "SELECT rc.fecha_examen, COUNT(rc.examen) AS CCR, 0 AS CM FROM registro_caso rc WHERE rc.examen='positivo' GROUP by rc.fecha_examen UNION ALL SELECT e.fecha, 0, COUNT(e.estado) FROM estado e WHERE e.estado=6 GROUP by e.fecha ORDER BY fecha_examen";
+      socket.emit('post4',query4);
+
+    </script>
 </head>
 <body>
     <form action="/login" method="post">
-    <text>Usuario: <br><input id="usuario1" name="usuarios" placeholder="Click para editar"></text><br><br>
-    <text>Contraseña: <br><input id="contraseña1" name="contraseñas" placeholder="Click para editar"></text><br><br>
-    <input type="submit" value="enviar1">
-    <input type="button" onclick="cambia_register();" value="register" />
+      <text>Usuario: <br><input id="usuario1" name="usuarios" placeholder="Click para editar"></text><br><br>
+      <text>Contraseña: <br><input id="contraseña1" name="contraseñas" placeholder="Click para editar"></text><br><br>
+      <input type="submit" value="enviar1">
+      <input type="button" onclick="cambia_register();" value="register" />
     </form>
-    <div id="piechart" style="width: 900px; height: 500px;"></div>
-    <div id="piechart2" style="width: 900px; height: 500px;"></div>
-    <div id="piechart3" style="width: 900px; height: 500px;"></div>
-
+    <canvas id="myChart" style="width: 1366px; height: 200px;"></canvas>
+    <script>
+      socket.on('show', function(message) {
+        var ctx = document.getElementById('myChart');
+        var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ["Casos positivos", "Casos negativos"],
+          datasets: [{
+            data: [message[0], message[1]],
+            backgroundColor: ["#ff0000", "#008f39"]
+          }]
+        },
+        options: {
+          responsive: false,
+          title: {
+            display: true,
+            text: 'Casos',
+            lineHeight: 2,
+            fontSize: 25
+          }
+        }
+      });
+  });
+  
+    </script>
+    <canvas id="myChart2" style="width: 1366px; height: 200px;"></canvas>
+    <script>
+      socket.on('show2', function(message) {
+        var ctx2 = document.getElementById('myChart2');
+        var myPieChart2 = new Chart(ctx2, {
+        type: 'pie',
+        data: {
+          labels: ["Tratamiento - Casa", "Tratamiento - Hospital", "UCI", "Muerte"],
+          datasets: [{
+            data: [message[1], message[2], message[3], message[4]],
+            backgroundColor: ["#FFB600", "#FF6400", "#003EFF", "#000000"]
+          }]
+        },
+        options: {
+          responsive: false,
+          title: {
+            display: true,
+            text: 'Infectados',
+            lineHeight: 2,
+            fontSize: 25
+          }
+        }
+      });
+  });
+  
+    </script>
+    </script>
+    <canvas id="myChart3" style="width: 1366px; height: 200px;"></canvas>
+    <script>
+      socket.on('show3', function(message) {
+        var ctx3 = document.getElementById('myChart3');
+        var myPieChart3 = new Chart(ctx3, {
+        type: 'pie',
+        data: {
+          labels: ["Infectado", "Muerte", "Curado"],
+          datasets: [{
+            data: [message[1]+message[2]+message[3], message[5], message[4]],
+            backgroundColor: ["#ff0000", "#000000", "#008f39"]
+          }]
+        },
+        options: {
+          responsive: false,
+          title: {
+            display: true,
+            text: 'Casos totales',
+            lineHeight: 2,
+            fontSize: 25
+          }
+        }
+      });
+  });
+  
+    </script>
+    <canvas id="myChart4" style="width: 500px; height: 300px;"></canvas>
+    <script>
+    socket.on('show4', function(message) {
+    socket.on('show5', function(message1){
+    socket.on('show6', function(message2){
+      for (let i = 0; i < message.length; i++) {
+        var lqws = message[i];
+        if (lqws== message[i+1]){
+            message1.splice(i+1,1)
+            message2.splice(i,1)
+            message.splice(i,1)
+          }
+      }
+    var ctx4 = document.getElementById('myChart4');
+    var myBarChart = new Chart(ctx4, {
+      type: 'bar',
+      data: {
+        labels: message,
+        datasets: [{
+        label: "Registrados",
+        barPercentage: 0.5,
+        barThickness: 10,
+        maxBarThickness: 8,
+        minBarLength: 2,
+        data: message1,
+        backgroundColor: "#ff0000"
+    },
+    {
+        label: "Muertos",
+        barPercentage: 0.5,
+        barThickness: 10,
+        maxBarThickness: 8,
+        minBarLength: 2,
+        data: message2,
+        backgroundColor: "#000000"
+    }]
+        
+      },
+      options: {
+        title: {
+            display: true,
+            text: 'Casos totales',
+            lineHeight: 2,
+            fontSize: 25
+          },
+          responsive:false,
+        scales: {
+        yAxes:[{
+          scaleStepWidth:1
+        }],
+          
+        xAxes: [{
+            gridLines: {
+                offsetGridLines: true
+            }
+        }]
+    }
+        
+      }
+    });
+  });
+  });
+  });
+    </script>
     <script src="script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </body>
 </html>

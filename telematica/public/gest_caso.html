@@ -45,20 +45,19 @@
     </text><br><br>
 
     <button  onclick="obtenerCaso()">Obtener Caso</button>
-    <br><br>
-    <select name="menu1" id="menu1">
-        <option value="casa">En Tratamiento Casa</option>
-        <option value="hospital">En tratamiento Hospital</option>
-        <option value="uci">En UCI</option>
-        <option value="curado">Curado</option>
-        <option value="muerte">Muerte</option>
 
-    
-    </select>
-
-      <button  onclick="estado_act()">ONCLICK</button>
-      <button  onclick="ACT()">actualizar</button>
-      <p id="actu"></p>
+      <form action="/estado" method="post">
+      <p>
+        Actualizar Estado:<br>
+        <input type="radio" name="estado" value="casa" id="casa"> En Tratamiento Casa
+        <input type="radio" name="estado" value="hospital" id="hospital"> En tratamiento Hospital
+        <input type="radio" name="estado" value="uci" id="uci"> En UCI
+        <input type="radio" name="estado" value="curado" id="curado"> Curado
+        <input type="radio" name="estado" value="muerte" id="muerte"> Muerte
+      </p>
+      <input type="submit" value="Actualizar Estado">
+      <button  onclick="estado_act()">act</button>
+    </form>
       
       <script src="script.js"></script>   
 </body>
