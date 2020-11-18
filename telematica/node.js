@@ -208,7 +208,7 @@ app.post('/mapaplan', (req, res) => {
     var nombre = req.body.con;
     console.log(req.body);
 
-    let sql = `SELECT direccion, trabajo FROM registro_caso WHERE idCaso LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
+    let sql = `SELECT * FROM registro_caso WHERE idCaso LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
     let query = database.query(sql, (err, result) => {
         if(err){ throw err;}
         res.end(JSON.stringify(result));

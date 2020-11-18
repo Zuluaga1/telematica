@@ -7,17 +7,19 @@
 </head>
 <body>
     <div style="position:absolute; top:60px; left:0px; z-index:5; width:350px; height:500px; background-color:#CDCDCD; opacity:0.9">
+
         <form
             style="position:absolute; top:45px; left:5px; z-index: 10;"
             name="formulario_fecha" id="formulario_fecha">
+
             <input type="button" value="Busqueda" id="historia" onclick="initMap(), validate()">
             <input type="button" value="General" id="general" onclick="initMap(), casos()">
+
         </form>
 
         <font color=#000000>
             <h1 style= "font-size:0.8cm;font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; position:absolute; z-index: 10; left:0.2cm; top: -10px;" ><i>AUCH</i></h1>
         </font>
-
         <form
             style="display: block; position:absolute; top:305px; left:10px; z-index: 10;"
             name="form_fecha" id="form_fecha" autocomplete="off" target="dummyframe" >
@@ -62,23 +64,23 @@
         <h2 style= "font-size:0.4cm;font-family:'Times New Roman', Times, serif; position:absolute; z-index: 10; left:4.7cm; top: 270px;" ><p id="fecha2"></p></h2>
     </div>
 
-    <div id="table" style="position:absolute; top:10px; left:1060px; z-index:5; width:350px; height:500px" >
-        <h2>Listado de estados por fecha</h2>
+        <div id="table" style="position:absolute; top:10px; left:1060px; z-index:5; width:350px; height:500px" >
+            <h2>Listado de estados por fecha</h2>
 
-        <table cellspacing="0" cellpadding="0" border="0" width="325">
-            <tr>
-              <td>
-                 <table cellspacing="0" cellpadding="1" border="1" width="300" >
-                   <tr style="color:rgb(255, 255, 255);background-color:grey">
-                      <th>Fecha</th>
-                      <th>Estado</th>
-                   </tr>
-                 </table>
-              </td>
-            </tr>
-          </table>
-        
-    </div>
+            <table cellspacing="0" cellpadding="0" border="0" width="325">
+                <tr>
+                <td>
+                    <table cellspacing="0" cellpadding="1" border="1" width="300" >
+                    <tr style="color:rgb(255, 255, 255);background-color:grey">
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                    </tr>
+                    </table>
+                </td>
+                </tr>
+            </table>
+            
+        </div>
 
     <div id="map">
     </div>
@@ -98,9 +100,10 @@
         }
     
         async function validate(){
+            initMap();
             if (document.getElementById('fname').value == ""){
-                
-            } else {
+
+            } else{
                 var con = document.getElementById('fname').value;
                 const consulta = {con:con};
                 const options1 = {
@@ -156,7 +159,7 @@
                         alert('Geocode was not successful for the following reason: ' + status);
                     }
                 });
-
+  
                 var con1 = result[0].idCaso;
                 const consulta2 = {con:con1};
                 const options2 = {
@@ -178,8 +181,10 @@
                     '<td>' + object.estado + '</td>';
                     table.appendChild(tr);
                 });
+
             }
         }
+        
         
         async function casos(){
             var sql = `SELECT  r.direccion, e.fecha, e.estado, e.idcaso FROM estado e
@@ -262,8 +267,11 @@
                     
             } 
         }
-    
+     
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZFxENpr18VouKnGzRAxHJX4aOGoAXJpY&callback=initMap"></script>
+
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZFxENpr18VouKnGzRAxHJX4aOGoAXJpY&callback=initMap">
+    </script>
 </body>
 </html>
