@@ -129,26 +129,20 @@
       }
     var ctx4 = document.getElementById('myChart4');
     var myBarChart = new Chart(ctx4, {
-      type: 'bar',
+      type: 'line',
       data: {
         labels: message,
         datasets: [{
         label: "Registrados",
-        barPercentage: 0.5,
-        barThickness: 10,
-        maxBarThickness: 8,
-        minBarLength: 2,
+        fill:false,
         data: message1,
-        backgroundColor: "#ff0000"
+        borderColor: "#ff0000"
     },
     {
         label: "Muertos",
-        barPercentage: 0.5,
-        barThickness: 10,
-        maxBarThickness: 8,
-        minBarLength: 2,
+        fill:false,
         data: message2,
-        backgroundColor: "#000000"
+        borderColor: "#000000"
     }]
         
       },
