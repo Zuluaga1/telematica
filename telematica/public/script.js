@@ -65,3 +65,75 @@ async function asincrono(caso){
     
 }
 //console.log(data);
+
+
+
+//FORMS
+
+//Login check
+if (document.getElementById('formLogin') != undefined) {
+    const formLogin = document.getElementById('formLogin')
+    formLogin.addEventListener('submit', (e) =>{
+        e.preventDefault();
+        user = e.target.elements.usuarios.value;
+        pass = e.target.elements.contraseñas.value;
+        let form = e.target
+        if (user == "" && pass == "") {
+            swal({
+                title: "ERROR!",
+                text: "Debes ingresar tu usuario y contraseña para acceder",
+                icon: "warning",
+            });
+        } else if (user == "") {
+            swal({
+                title: "ERROR!",
+                text: "Debes ingresar tu usuario para acceder",
+                icon: "warning",
+            });
+        } else if (pass == "") {
+            swal({
+                title: "ERROR!",
+                text: "Debes ingresar tu contraseña para acceder",
+                icon: "warning",
+            });
+        } else {
+            form.submit()
+        }
+    });
+} else {
+    //pass
+}
+
+//User Register
+if (document.getElementById('formAdmin') != undefined) {
+    const formAdmin = document.getElementById('formAdmin')
+    formAdmin.addEventListener('submit', (e) =>{
+        e.preventDefault();
+        nombre = e.target.elements.nombre.value;
+        apellido = e.target.elements.apellido.value;
+        cedula = e.target.elements.cedula.value;
+        user = e.target.elements.user.value;
+        pass = e.target.elements.pass.value;
+        let form = e.target
+        if (nombre == "" || apellido == "" || cedula == "" || user == "" || pass == "" ) {
+            swal({
+                title: "ERROR!",
+                text: "Todos los campos deben ser ingresados",
+                icon: "warning",
+            });
+        } else {
+            swal({
+                title: "HECHO!",
+                text: "El usuario ha sido registrado correctamente!",
+                icon: "success",
+            });
+            form.submit()
+            document.forms['formAdmin'].reset()
+        }
+    });
+} else {
+    //pass
+}
+
+
+

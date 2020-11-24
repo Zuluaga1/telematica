@@ -30,13 +30,22 @@ const database = mysql.createConnection({
     database: "covid",
     port:   "3306"
 });
-
+ 
 //connect
 database.connect((err) => {
     if (err){
         throw err;
     }    
     console.log('Mysql Connected...');
+});
+
+//Landing page
+app.get('/', (request, response) => {
+    response.sendFile(path.join(__dirname + '/public/landing.html'));
+});
+
+app.get('/login', (request, response) => {
+    response.sendFile(path.join(__dirname + '/public/login.html'));
 });
 
 //dirección para el logeo
@@ -46,17 +55,15 @@ app.get('/acceder', function(request, response) {
 });
 
 app.post('/form', (req, res) => {
-    //let nombre1=req.body.nombre1;
-    //console.log(req.body);
     database.connect(function(err) {
-        let post = {nombre: req.body.nombre, apellido: req.body.apellido, cedula: req.body.cedula, rol: req.body.rol, usuario: req.body.usuario, contraseña: req.body.contraseña}; 
+        let post = {nombre: req.body.nombre, apellido: req.body.apellido, cedula: req.body.cedula, rol: req.body.rol, usuario: req.body.user, contraseña: req.body.pass}; 
         let sql = 'INSERT INTO user SET ?';
         database.query(sql,post, function (err, result) {
           if (err) throw err;
           console.log("1 record inserted");
         });
     });
-    
+    res.status(204).send();
 });
 
 app.post('/estado', (req, res) => {
@@ -80,51 +87,46 @@ app.post('/estado', (req, res) => {
 app.post('/login', (req, res) => {
     var username =req.body.usuarios;
     var password =req.body.contraseñas;
-    //console.log(req.body);
     const medico = "medico";
-    const ayudante = "ayudante";    
-        //console.log(results);
-    //});
+    const ayudante = "ayudante";
+    const admin = "admin";    
     if (username && password) {
-        //console.log(username, password);
         let sql = `SELECT * FROM user WHERE usuario LIKE '${username}' AND contraseña LIKE '${password}'`;
-        //let sql = `SELECT * FROM user WHERE usuario, contraseña, rol = (SELECT ${username}==(usuario) and ${password}==(contraseña) FROM user)`;
-         let query = database.query(sql, (err, results) => { 
-         if(results.length >0){
-            if (err){
-                res.send('Incorrect Username and/or Password!');
-            }
-                
-                else if (username ==results[0].usuario && password ==results[0].contraseña && ayudante == results[0].rol) {
-				    req.session.loggedin = true;
-				    req.session.username = username;
-                    res.redirect('/logeado_ayudante');
-                 
-            } else if(username ==results[0].usuario && password ==results[0].contraseña && medico == results[0].rol){
-                req.session.loggedin = true;
-				    req.session.username = username;
+        let query = database.query(sql, (err, results) => { 
+            if(results.length >0){
+                if (err){
+                    //res.send('Incorrect Username and/or Password!');
+                } else if (username == results[0].usuario && password ==results[0].contraseña && ayudante == results[0].rol) {
+                    req.session.loggedin1 = true;
+                    req.session.username = username;
+                    res.redirect('/logeado_ayudante'); 
+                } else if (username ==results[0].usuario && password ==results[0].contraseña && medico == results[0].rol){
+                    req.session.loggedin = true;
+                    req.session.username = username;
                     res.redirect('/logeado_medico');
-                }
-        }   else {
-                    res.send('Incorrect Username and/or Password!');
+                } else if (username ==results[0].usuario && password ==results[0].contraseña && admin == results[0].rol){}
+                    req.session.loggedin2 = true;
+                    req.session.username = username;
+                    res.redirect('/admin');
+                } else {
+                    res.status(204).send();
             }
-    });
-	} else {
-		res.send('Please enter Username and Password!');
-		res.end();
+        });
     }
-    
-    /* let sql1 =(`SELECT * FROM user WHERE usuario, contraseña"  ${req.body.usuarios} and ${req.body.contraseñas}`);
-    let query = database.query(sql1, (err, result) => {
-        if (err) throw err;
-    res.end(JSON.stringify(result));
-    console.log("correcto");
-    }); */
 });
+
+
+app.get('/admin', function(request, response) {
+	if (request.session.loggedin2) {
+        return response.sendFile(path.join(__dirname + '/public/admin.html'));
+	} else {
+        return response.sendFile(path.join(__dirname + '/public/login.html'));
+	} 
+});
+
+
 app.get('/logeado_ayudante', function(request, response) {
-    
-	if (request.session.loggedin) {
-       
+	if (request.session.loggedin1) {
         return response.sendFile(path.join(__dirname + '/public/registro.html'));
 	} else {
         return response.sendFile(path.join(__dirname + '/public/login.html'));
@@ -257,6 +259,142 @@ io.on('connection', socket => {
             }
                 console.log(coord);
               socket.emit('show', coord);
+
+            });
+    
+        });
+    });
+
+});
+
+io.on('connection', socket => {
+
+    socket.on('post2', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord2 = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                var val = Object.values(x)[1];
+                coord2.push(val);
+            }
+                console.log(coord2);
+              socket.emit('show2', coord2);
+
+            });
+    
+        });
+    });
+
+});
+
+io.on('connection', socket => {
+
+    socket.on('post3', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord3 = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                var val = Object.values(x)[1];
+                coord3.push(val);
+            }
+                console.log(coord3);
+              socket.emit('show3', coord3);
+
+            });
+    
+        });
+    });
+
+});
+
+io.on('connection', socket => {
+
+    socket.on('post4', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord4 = [];
+              var coord5 = [];
+              var coord6 = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                
+                var val = Object.values(x)[0];
+                val = val.toString();
+                var valc = val.split(' ');
+                
+                val = valc[1]+' '+valc[2]+' '+valc[3]; 
+                coord4.push(val);
+            }
+                console.log(coord4);
+              socket.emit('show4', coord4);
+
+            });
+    
+        });
+    });
+
+});
+
+io.on('connection', socket => {
+
+    socket.on('post4', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord4 = [];
+              var coord5 = [];
+              var coord6 = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                var val2 = Object.values(x)[1];
+                coord5.push(val2);
+            }
+                console.log(coord5);
+              socket.emit('show5', coord5);
+
+            });
+    
+        });
+    });
+
+});
+
+io.on('connection', socket => {
+
+    socket.on('post4', msg => {
+        var sql = msg;
+        database.connect(function(err) {
+            database.query(sql, function (err, result) {
+              if (err) throw err;
+              console.log(result);
+
+              var coord4 = [];
+              var coord5 = [];
+              var coord6 = [];
+              for (let i = 0; i < result.length; i++) {
+                var x = result[i]
+                var val3 = Object.values(x)[2];
+                coord6.push(val3);
+            }
+                console.log(coord6);
+              socket.emit('show6', coord6);
 
             });
     

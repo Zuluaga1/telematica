@@ -1,20 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MODULO DE VISUALIZACION (MEDICO)</title> 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div style="position:absolute; top:60px; left:0px; z-index:5; width:350px; height:500px; background-color:#CDCDCD; opacity:0.9">
-
         <form
             style="position:absolute; top:45px; left:5px; z-index: 10;"
             name="formulario_fecha" id="formulario_fecha">
-
             <input type="button" value="Busqueda" id="historia" onclick="initMap(), validate()">
             <input type="button" value="General" id="general" onclick="initMap(), casos()">
-
         </form>
 
         <font color=#000000>
@@ -23,7 +23,6 @@
         <form
             style="display: block; position:absolute; top:305px; left:10px; z-index: 10;"
             name="form_fecha" id="form_fecha" autocomplete="off" target="dummyframe" >
-
             <label for="inicio"> Ingrese Cédula del paciente o el ID del caso:</label>
             <input type="text" id="fname" name="fname" required><br>
             <input type="submit" value="Submit" id="btnSubmit" onclick="validate()">
@@ -64,23 +63,21 @@
         <h2 style= "font-size:0.4cm;font-family:'Times New Roman', Times, serif; position:absolute; z-index: 10; left:4.7cm; top: 270px;" ><p id="fecha2"></p></h2>
     </div>
 
-        <div id="table" style="position:absolute; top:10px; left:1060px; z-index:5; width:350px; height:500px" >
-            <h2>Listado de estados por fecha</h2>
-
-            <table cellspacing="0" cellpadding="0" border="0" width="325">
-                <tr>
-                <td>
-                    <table cellspacing="0" cellpadding="1" border="1" width="300" >
-                    <tr style="color:rgb(255, 255, 255);background-color:grey">
-                        <th>Fecha</th>
-                        <th>Estado</th>
-                    </tr>
-                    </table>
+    <div id="table" style="position:absolute; top:10px; left:1060px; z-index:5; width:350px; height:500px" >
+        <h2>Listado de estados por fecha</h2>
+        <table cellspacing="0" cellpadding="0" border="0" width="325">
+            <tr>
+            <td>
+            <table cellspacing="0" cellpadding="1" border="1" width="300" >
+                <tr style="color:rgb(255, 255, 255);background-color:grey">
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                </tr>
+            </table>
                 </td>
                 </tr>
             </table>
-            
-        </div>
+    </div>
 
     <div id="map">
     </div>
@@ -267,11 +264,10 @@
                     
             } 
         }
-     
     </script>
-
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZFxENpr18VouKnGzRAxHJX4aOGoAXJpY&callback=initMap">
-    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZFxENpr18VouKnGzRAxHJX4aOGoAXJpY&callback=initMap"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </body>
 </html>
