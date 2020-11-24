@@ -35,6 +35,20 @@ function estado_act(){
     console.log(caso)
 }
 
+function newRow(){
+    var newRow = $("<tr>");
+    var cols = "";
+
+    var cols = "";
+
+    cols += '<td><input type="text" class="form-control" name="name' + counter + '"/></td>';
+    cols += '<td><input type="text" class="form-control" name="mail' + counter + '"/></td>';
+    cols += '<td><input type="text" class="form-control" name="phone' + counter + '"/></td>';
+        newRow.append(cols);
+        $("table.order-list").append(newRow);
+        counter++;
+}
+
 
 async function asincrono(caso){
     const options = {

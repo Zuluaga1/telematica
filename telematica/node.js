@@ -51,7 +51,6 @@ app.get('/login', (request, response) => {
 //dirección para el logeo
 app.get('/acceder', function(request, response) {
     response.sendFile(path.join(__dirname + '/public/login.html'));
-    //console.log(__dirname + '/public/login.html')
 });
 
 app.post('/form', (req, res) => {
@@ -95,7 +94,7 @@ app.post('/login', (req, res) => {
         let query = database.query(sql, (err, results) => { 
             if(results.length >0){
                 if (err){
-                    //res.send('Incorrect Username and/or Password!');
+                    res.send('Incorrect Username and/or Password!');
                 } else if (username == results[0].usuario && password ==results[0].contraseña && ayudante == results[0].rol) {
                     req.session.loggedin1 = true;
                     req.session.username = username;
@@ -103,13 +102,14 @@ app.post('/login', (req, res) => {
                 } else if (username ==results[0].usuario && password ==results[0].contraseña && medico == results[0].rol){
                     req.session.loggedin = true;
                     req.session.username = username;
-                    res.redirect('/logeado_medico');
-                } else if (username ==results[0].usuario && password ==results[0].contraseña && admin == results[0].rol){}
+                    res.redirect('/general');
+                } else if (username ==results[0].usuario && password ==results[0].contraseña && admin == results[0].rol){
                     req.session.loggedin2 = true;
                     req.session.username = username;
                     res.redirect('/admin');
-                } else {
-                    res.status(204).send();
+                } 
+            } else {
+                res.status(204).send();
             }
         });
     }
@@ -133,6 +133,14 @@ app.get('/logeado_ayudante', function(request, response) {
 	} 
 });
 
+app.get('/general', function(request, response) {
+	if (request.session.loggedin) {
+        return response.sendFile(path.join(__dirname + '/public/general.html'));
+	} else {
+        return response.sendFile(path.join(__dirname + '/public/login.html'));
+	}
+});
+
 
 app.post('/logeado_ayudante', (req, res) => {
     //console.log(req.body);
@@ -149,30 +157,6 @@ app.post('/logeado_ayudante', (req, res) => {
        
 
     });
-});
-
-app.get('/logeado_ayudante', function(request, response) {
-    
-	if (request.session.loggedin) {
-       
-        return response.sendFile(path.join(__dirname + '/public/registro.html'));
-	} else {
-        return response.sendFile(path.join(__dirname + '/public/login.html'));
-	}
-    
-    
-});
-
-
-
-
-app.get('/logeado_medico', function(request, response) {
-	if (request.session.loggedin) {
-        return response.sendFile(path.join(__dirname + '/public/logeado_medico.html'));
-        
-	} else {
-        return response.sendFile(path.join(__dirname + '/public/login.html'));
-	}
 });
 
 app.get('/gest_caso', function(request, response) {
@@ -208,8 +192,6 @@ app.post('/gest_caso', (req, res) => {
 
 app.post('/mapaplan', (req, res) => {
     var nombre = req.body.con;
-    console.log(req.body);
-
     let sql = `SELECT * FROM registro_caso WHERE idCaso LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
     let query = database.query(sql, (err, result) => {
         if(err){ throw err;}
@@ -220,8 +202,6 @@ app.post('/mapaplan', (req, res) => {
 
 app.post('/mapaplan2', (req, res) => {
     var idcaso = req.body.con;
-    console.log(req.body);
-
     let sql = `SELECT es.fecha, con.estado
                 FROM estado es, condicion con
                 WHERE es.idcaso = '${idcaso}' AND es.estado = con.idcondicion`;
