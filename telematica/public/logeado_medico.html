@@ -37,7 +37,7 @@
 
             <label for="inicio"> Ingrese Cédula del paciente o el ID del caso:</label>
             <input type="text" id="fname" name="fname" required><br>
-            <input type="submit" value="Submit" id="btnSubmit" onclick="validate()">
+            <input type="submit" value="Submit" id="btnSubmit" onclick="vaciar1(), validate()">
         </form>
     </div>
 
@@ -118,6 +118,11 @@
             });
             geocoder = new google.maps.Geocoder();
         }
+
+        function vaciar1(){
+/*                 console.log(23); */
+                document.getElementById('table').innerHTML = '';
+                }
     
         async function validate(){
             initMap();
@@ -194,6 +199,7 @@
 
                 console.log(result1);
                 //LLENAR TABLA
+                
                 var table = document.getElementById('table');
                 result1.forEach(function(object) {
                     var tr = document.createElement('tr');

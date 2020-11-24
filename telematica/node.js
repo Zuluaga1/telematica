@@ -44,7 +44,7 @@ app.get('/acceder', function(request, response) {
 
 app.post('/form', (req, res) => {
     //let nombre1=req.body.nombre1;
-    //console.log(req.body);
+    console.log(req.body);
     database.connect(function(err) {
         let post = {nombre: req.body.nombre, apellido: req.body.apellido, cedula: req.body.cedula, rol: req.body.rol, usuario: req.body.usuario, contraseña: req.body.contraseña}; 
         let sql = 'INSERT INTO user SET ?';
