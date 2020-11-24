@@ -258,16 +258,10 @@ io.on('connection', socket => {
                 coord.push(val);
             }
                 console.log(coord);
-              socket.emit('show', coord);
-
+                socket.emit('show', coord);
             });
-    
         });
     });
-
-});
-
-io.on('connection', socket => {
 
     socket.on('post2', msg => {
         var sql = msg;
@@ -283,16 +277,12 @@ io.on('connection', socket => {
                 coord2.push(val);
             }
                 console.log(coord2);
-              socket.emit('show2', coord2);
+                socket.emit('show2', coord2);
 
             });
     
         });
     });
-
-});
-
-io.on('connection', socket => {
 
     socket.on('post3', msg => {
         var sql = msg;
@@ -308,16 +298,12 @@ io.on('connection', socket => {
                 coord3.push(val);
             }
                 console.log(coord3);
-              socket.emit('show3', coord3);
+                socket.emit('show3', coord3);
 
             });
     
         });
     });
-
-});
-
-io.on('connection', socket => {
 
     socket.on('post4', msg => {
         var sql = msg;
@@ -331,71 +317,24 @@ io.on('connection', socket => {
               var coord6 = [];
               for (let i = 0; i < result.length; i++) {
                 var x = result[i]
-                
                 var val = Object.values(x)[0];
+                var val2 = Object.values(x)[1];
+                var val3 = Object.values(x)[2];
+
                 val = val.toString();
                 var valc = val.split(' ');
                 
                 val = valc[1]+' '+valc[2]+' '+valc[3]; 
                 coord4.push(val);
-            }
-                console.log(coord4);
-              socket.emit('show4', coord4);
-
-            });
-    
-        });
-    });
-
-});
-
-io.on('connection', socket => {
-
-    socket.on('post4', msg => {
-        var sql = msg;
-        database.connect(function(err) {
-            database.query(sql, function (err, result) {
-              if (err) throw err;
-              console.log(result);
-
-              var coord4 = [];
-              var coord5 = [];
-              var coord6 = [];
-              for (let i = 0; i < result.length; i++) {
-                var x = result[i]
-                var val2 = Object.values(x)[1];
                 coord5.push(val2);
-            }
-                console.log(coord5);
-              socket.emit('show5', coord5);
-
-            });
-    
-        });
-    });
-
-});
-
-io.on('connection', socket => {
-
-    socket.on('post4', msg => {
-        var sql = msg;
-        database.connect(function(err) {
-            database.query(sql, function (err, result) {
-              if (err) throw err;
-              console.log(result);
-
-              var coord4 = [];
-              var coord5 = [];
-              var coord6 = [];
-              for (let i = 0; i < result.length; i++) {
-                var x = result[i]
-                var val3 = Object.values(x)[2];
                 coord6.push(val3);
             }
-                console.log(coord6);
-              socket.emit('show6', coord6);
-
+                console.log(coord4);
+                var arrayPost4 = [];
+                arrayPost4.push(coord4);
+                arrayPost4.push(coord5);
+                arrayPost4.push(coord6);
+                socket.emit('show4',arrayPost4)
             });
     
         });

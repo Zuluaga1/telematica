@@ -198,9 +198,11 @@
       });
       });
 
-    socket.on('show4', function(message) {
-    socket.on('show5', function(message1){
-    socket.on('show6', function(message2){
+    socket.on('show4', function(msg) {
+      var message = msg[0];
+      var message1 = msg[1];
+      var message2 = msg[2];
+
       for (let i = 0; i < message.length; i++) {
         var lqws = message[i];
         if (lqws== message[i+1]){
@@ -209,49 +211,47 @@
             message.splice(i,1)
           }
       }
-    var myBarChart = new Chart(ctx4, {
-      type: 'bar',
-      data: {
-        labels: message,
-        datasets: [{
-        label: "Registrados",
-        barPercentage: 0.5,
-        barThickness: 10,
-        maxBarThickness: 8,
-        minBarLength: 2,
-        data: message1,
-        backgroundColor: "#ff0000"
-    },
-    {
-        label: "Muertos",
-        barPercentage: 0.5,
-        barThickness: 10,
-        maxBarThickness: 8,
-        minBarLength: 2,
-        data: message2,
-        backgroundColor: "#000000"
-    }]
-        
-      },
-      options: {
-          responsive:true,
-        scales: {
-        yAxes:[{
-          scaleStepWidth:1
-        }],
-        xAxes: [{
-            gridLines: {
-                offsetGridLines: true
-            }
-        }]
-    }
-        
-      }
+
+      var myBarChart = new Chart(ctx4, {
+        type: 'bar',
+        data: {
+          labels: message,
+          datasets: [{
+          label: "Registrados",
+          barPercentage: 0.5,
+          barThickness: 10,
+          maxBarThickness: 8,
+          minBarLength: 2,
+          data: message1,
+          backgroundColor: "#ff0000"
+        },
+        {
+          label: "Muertos",
+          barPercentage: 0.5,
+          barThickness: 10,
+          maxBarThickness: 8,
+          minBarLength: 2,
+          data: message2,
+          backgroundColor: "#000000"
+        }]    
+        },
+        options: {
+            responsive:true,
+          scales: {
+          yAxes:[{
+            scaleStepWidth:1
+          }],
+          xAxes: [{
+              gridLines: {
+                  offsetGridLines: true
+              }
+          }]
+          }
+          
+        }
+      });
     });
-  });
-  });
-  });
-    </script>
+  </script>
   <script>
     var scroll = new SmoothScroll('a[href*="#"]');
   </script>
