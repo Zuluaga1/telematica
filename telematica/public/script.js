@@ -111,12 +111,30 @@ if (document.getElementById('formLogin') != undefined) {
                 icon: "warning",
             });
         } else {
+            var content = [];
+            content.push(user);
+            content.push(pass);
+            socket.emit("login", content)
             form.submit()
         }
     });
 } else {
     //pass
 }
+
+//Check if user and password r incorrect
+socket.on('loginCheck', function(message) {
+    if (message.length > 0) {
+        //pass
+    } else {
+        swal({
+            title: "ERROR!",
+            text: "El usuario ingresado es incorrecto. Intente de nuevo",
+            icon: "warning",
+        });
+    }
+});
+
 
 //User Register
 if (document.getElementById('formAdmin') != undefined) {

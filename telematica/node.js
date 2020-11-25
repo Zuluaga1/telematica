@@ -84,21 +84,21 @@ app.post('/estado', (req, res) => {
 });
         
 app.post('/login', (req, res) => {
-    var username =req.body.usuarios;
-    var password =req.body.contraseñas;
+    var username = req.body.usuarios;
+    var password = req.body.contraseñas;
     const medico = "medico";
     const ayudante = "ayudante";
     const admin = "admin";    
     if (username && password) {
         let sql = `SELECT * FROM user WHERE usuario LIKE '${username}' AND contraseña LIKE '${password}'`;
-        let query = database.query(sql, (err, results) => { 
+        let query = database.query(sql, (err, results) => {
             if(results.length >0){
                 if (err){
                     res.send('Incorrect Username and/or Password!');
                 } else if (username == results[0].usuario && password ==results[0].contraseña && ayudante == results[0].rol) {
                     req.session.loggedin1 = true;
                     req.session.username = username;
-                    res.redirect('/logeado_ayudante'); 
+                    res.redirect('/logeado_ayudante');
                 } else if (username ==results[0].usuario && password ==results[0].contraseña && medico == results[0].rol){
                     req.session.loggedin = true;
                     req.session.username = username;
@@ -223,6 +223,18 @@ app.post('/casos', (req, res) => {
 
 //Info Pagina principal
 io.on('connection', socket => {
+
+    socket.on('login', msg => {
+        var username = msg[0];
+        var password = msg[1];   
+        if (username && password) {
+            let sql = `SELECT * FROM user WHERE usuario LIKE '${username}' AND contraseña LIKE '${password}'`;
+            let query = database.query(sql, (err, results) => {
+                if (err) throw err;
+                socket.emit("loginCheck", results)
+            });
+        }
+    });
 
     socket.on('post', msg => {
         var sql = msg;

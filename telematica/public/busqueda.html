@@ -49,7 +49,7 @@
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                   <!-- <div class="dropdown-divider"></div> -->
                   <!-- BORRAR EL HREF DE LA LINEA DE ABAJO, ES SOLO PARA TESTEO DE LA PAGINA -->
-                  <a class="dropdown-item" href="/index.html">Cerrar sesión</a>
+                  <a class="dropdown-item" href="/landing.html">Cerrar sesión</a>
                 </div>
               </li>
             </ul>
@@ -263,6 +263,7 @@
               result = await response1.json();
               console.log(result);
 
+              if (result.length > 0){
               //Simplify addresses
               var nac = result[0].fecha_nac.split("T")
               var examen = result[0].fecha_examen.split("T")
@@ -337,6 +338,13 @@
                 table.appendChild(tr);
               });
             } else {
+              swal({
+                title: "ERROR!",
+                text: "No hay registros del caso ingresado",
+                icon: "warning",
+              });
+            }
+          } else {
               swal({
                 title: "ERROR!",
                 text: "Se debe ingresar la cédula del paciente o el ID del caso ",
