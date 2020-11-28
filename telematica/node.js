@@ -66,21 +66,21 @@ app.post('/form', (req, res) => {
 });
 
 app.post('/estado', (req, res) => {
-    //let nombre1=req.body.nombre1;
-    console.log(req.body.estado);
-    let currentTime = new Date();
+    var data =req.body.con;
+    var id = data[0];
+    var fecha_estado = data[1];
+    var estado = data[2]; 
+    // var currentTime = new Date();
+    // var date = currentTime.toString();
+    // console.log(date)
     database.connect(function(err) {
-        let post = {fecha: currentTime, estado: req.body.estado}; 
+        let post = {fecha: fecha_estado, estado: estado, idcaso: id}; 
         let sql = 'INSERT INTO estado SET ?';
-        database.query(sql,post, function (err, result) {
+        database.query(sql,post, function (err, results) {
           if (err) throw err;
-          console.log("1 record inserted");
-          //console.log(post.nombre)
-          
-          //const password=post.contraseña;
+          res.end(JSON.stringify(results)); 
         });
-    });
-    
+    });  
 });
         
 app.post('/login', (req, res) => {
@@ -98,7 +98,7 @@ app.post('/login', (req, res) => {
                 } else if (username == results[0].usuario && password ==results[0].contraseña && ayudante == results[0].rol) {
                     req.session.loggedin1 = true;
                     req.session.username = username;
-                    res.redirect('/logeado_ayudante');
+                    res.redirect('/ayudante');
                 } else if (username ==results[0].usuario && password ==results[0].contraseña && medico == results[0].rol){
                     req.session.loggedin = true;
                     req.session.username = username;
@@ -124,6 +124,14 @@ app.get('/admin', function(request, response) {
 	} 
 });
 
+app.get('/ayudante', function(request, response) {
+	if (request.session.loggedin1) {
+        return response.sendFile(path.join(__dirname + '/public/registro_caso.html'));
+	} else {
+        return response.sendFile(path.join(__dirname + '/public/login.html'));
+	} 
+});
+
 
 app.get('/logeado_ayudante', function(request, response) {
 	if (request.session.loggedin1) {
@@ -143,20 +151,43 @@ app.get('/general', function(request, response) {
 
 
 app.post('/logeado_ayudante', (req, res) => {
-    //console.log(req.body);
     database.connect(function(err) {
         let post = {nombre: req.body.nombre, apellido: req.body.apellido, cedula: req.body.cedula, sexo: req.body.sexo, fecha_nac: req.body.fecha_nac, direccion: req.body.direccion, trabajo: req.body.trabajo, examen: req.body.examen, fecha_examen: req.body.fecha_examen}; 
-        let sql = 'INSERT INTO registro_caso SET ?';
-        database.query(sql,post, function (err, result) {
+        let sql1 = 'INSERT INTO registro_caso SET ?';
+        database.query(sql1,post, function (err, result) {
           if (err) throw err;
-          console.log("se registró el caso correctamente");
-          //console.log(post.nombre)    
-          
-          //const password=post.contraseña;
         });
-       
 
+        let sql2 = `SELECT rc.idCaso, rc.examen, rc.fecha_examen FROM registro_caso rc
+                    WHERE rc.idCaso = (SELECT MAX(rc.idCaso) FROM registro_caso rc)`;
+
+        index();              
+        async function myQuery(){
+            return new Promise((resolve,reject)=>{
+                database.query(sql2, function (err, result2) {
+                    if (err) {throw err;}
+                    resolve(result2);
+                });      
+            });
+        }
+        async function index(){
+            var post2 = await myQuery()
+            var id = post2[0].idCaso
+            var examen = post2[0].examen
+            var fecha = post2[0].fecha_examen
+            if (examen == 'positivo'){
+                estado = 2;
+            } else {
+                estado = 1;
+            }
+            let post = {fecha: fecha, estado: estado, idcaso: id}; 
+            let sql = 'INSERT INTO estado SET ?';
+            database.query(sql,post, function (err, result) {
+                if (err) throw err;
+            });
+        }
     });
+    res.status(204).send();
 });
 
 app.get('/gest_caso', function(request, response) {
@@ -172,22 +203,32 @@ app.get('/gest_caso', function(request, response) {
 });
 
 app.post('/gest_caso', (req, res) => {
-    
-    var nombre = req.body.caso1;
-    console.log(req.body);
-    //var param = req.body.caso1;
-    let sql = `SELECT * FROM registro_caso WHERE nombre LIKE '${nombre}' OR id LIKE '${nombre}' OR cedula LIKE '${nombre}'`;
+    var nombre = req.body.con;
+    console.log(nombre)
+    let sql = `SELECT rc.idCaso, rc.nombre, rc.apellido, rc.cedula, rc.sexo, rc.fecha_nac, rc.direccion, 
+                rc.trabajo, rc.examen, rc.fecha_examen, cond.estado, est.fecha FROM registro_caso rc
+                INNER JOIN estado est ON rc.idCaso = est.idcaso
+                INNER JOIN condicion cond ON est.estado = cond.idcondicion
+                WHERE rc.nombre LIKE '${nombre}' OR rc.idCaso LIKE '${nombre}' OR rc.cedula LIKE '${nombre}'
+                ORDER BY est.fecha DESC, est.idestado DESC
+                LIMIT 1`;
     let query = database.query(sql, (err, results) => { 
-        if(results.length >0){
-           if (err){
-               res.send('No se encuentra');
-           }
-        }else{
-            res.send('Incorrect Username and/or Password!');
-           }
-           console.log(results)
-           res.end(JSON.stringify(results));       
-   });
+        if (err){ throw err;}
+        console.log(results)
+        res.end(JSON.stringify(results));       
+    });
+});
+
+app.post('/gest_caso2', (req, res) => {
+    var idcaso = req.body.con;
+    let sql = `SELECT es.fecha, con.estado
+                FROM estado es, condicion con
+                WHERE es.idcaso = '${idcaso}' AND es.estado = con.idcondicion`;
+    let query = database.query(sql, (err, result) => {
+        if(err){ throw err;}
+        res.end(JSON.stringify(result));
+        console.log(result)    
+    });
 });
 
 app.post('/mapaplan', (req, res) => {

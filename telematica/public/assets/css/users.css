@@ -103,3 +103,7 @@ a:hover {
     color: var(--dark);
 }
 
+.min-width {
+    min-width: 6.125rem;
+}
+

@@ -9,11 +9,12 @@
   <link rel="stylesheet" href="assets/css/users.css">
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;600&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="jquery/jquery.datetimepicker.min.css">
+  <title>Ayudante</title>
   <script src='/socket.io/socket.io.js'></script>
   <script>
     var socket = io.connect('http://localhost:80');
   </script>
-  <title>Admin</title>
 </head>
 
 <body>
@@ -24,8 +25,11 @@
         <h4 class="text-light font-weight-bold mb-0">COVID-19 Manager</h4>
       </div>
       <div class="menu">
-        <a href="/admin.html" class="d-block text-light p-3 border-0"><i class="icon ion-md-book lead mr-2"></i>
-          Registro</a>
+        <a href="/registro_caso.html" class="d-block text-light p-3 border-0"><i class="icon ion-md-apps lead mr-2"></i>
+          Registro de casos</a>
+        <a href="/obtener_caso.html" class="d-block text-light p-3 border-0"><i
+            class="icon ion-md-people lead mr-2"></i>
+          Obtener caso</a>
       </div>
     </div>
     <!-- Fin sidebar -->
@@ -44,12 +48,14 @@
               <li class="nav-item dropdown">
                 <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" role="button"
                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <img src="assets/img/config.png" class="img-fluid rounded-circle avatar mr-2"
+                  <img src="assets/img/prescripcion.png" class="img-fluid rounded-circle avatar mr-2"
                     alt="https://generated.photos/" />
                   Usuario
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="/landing.html">Cerrar sesión</a>
+                  <!-- <div class="dropdown-divider"></div> -->
+                  <!-- CAMBIAR EL HREF DE LA LINEA DE ABAJO, ES SOLO PARA TESTEO DE LA PAGINA -->
+                  <a class="dropdown-item" href="/index.html">Cerrar sesión</a>
                 </div>
               </li>
             </ul>
@@ -61,11 +67,11 @@
       <!-- Page Content -->
       <div id="content" class="bg-grey w-100">
         <section class="bg-light py-3">
-          <div class="container">
+          <div class="container-fluid">
             <div class="row">
               <div class="col-lg-9 col-md-8">
-                <h1 class="font-weight-bold mb-0">Bienvenido Admin</h1>
-                <p class="lead text-muted">A continuación, podrás registrar a los doctores y ayudantes en nuestro sistema</p>
+                <h1 class="font-weight-bold mb-0">Bienvenido Ayudante</h1>
+                <p class="lead text-muted">A continuación, podrás registrar los casos de COVID-19 en nuestro sistema</p>
               </div>
               <div class="col-lg-3 col-md-4 d-flex">
                 <!-- <button class="btn btn-primary w-100 align-self-center">Descargar reporte de hoy</button> -->
@@ -80,53 +86,81 @@
               <div class="col-lg-12 my-4">
                 <div class="card rounded-0">
                   <div class="card-header bg-light">
-                    <h5 class="d-inline-block font-weight-bold mb-0">Registro de usuarios</h5>
+                    <h5 class="d-inline-block font-weight-bold mb-0">Registro de casos</h5>
                   </div>
                   <div class="card-body">
                     <div class="container">
-                      <form id="formAdmin" action="/form" method="post">
+                      <form id="formCase" action="/logeado_ayudante" method="post">
                         <div class="row">
                           <div class="col-lg-6 my-4">
                             <div class="form-group mb-4">
                               <label for="nombre" class="font-weight-bold">Nombre</label>
-                              <input class="form-control bg-grey" id="nombre" name="nombre" placeholder="Ingrese el nombre">
+                              <input class="form-control bg-grey" id="nombre" name="nombre"
+                                placeholder="Ingrese su nombre">
                             </div>
                             <div class="form-group mb-4">
-                                <label for="apellido" class="font-weight-bold">Apellido</label>
-                                <input class="form-control bg-grey" id="apellido" name="apellido" placeholder="Ingrese el apellido">
+                              <label for="apellido" class="font-weight-bold">Apellido</label>
+                              <input class="form-control bg-grey" id="apellido" name="apellido"
+                                placeholder="Ingrese su apellido">
                             </div>
                             <div class="form-group mb-4">
-                                <label for="cedula" class="font-weight-bold">Cedula</label>
-                                <input class="form-control bg-grey" id="cedula" name="cedula" placeholder="Ingrese la cedula">
+                              <label for="cedula" class="font-weight-bold">Cedula</label>
+                              <input class="form-control bg-grey" id="cedula" name="cedula"
+                                placeholder="Ingrese su cedula">
                             </div>
-                          </div>
-                          <div class="col-lg-6 my-4">
                             <div class="form-group mb-0">
-                              <label for="exampleInputEmail1" class="font-weight-bold">Rol:</label>
+                              <label for="sexo" class="font-weight-bold">Sexo:</label>
                             </div>
                             <div class="form-group mb-4">
                               <div class="btn-group btn-group-toggle" data-toggle="buttons">
                                 <label class="btn btn-primary active">
-                                  <input type="radio" name="rol" value="medico" id="medico" checked> Médico
+                                  <input type="radio" name="sexo" id="masculino" value="masculino" checked> Masculino
                                 </label>
                                 <label class="btn btn-primary">
-                                  <input type="radio" name="rol" value="ayudante" id="ayudante"> Ayudante
+                                  <input type="radio" name="sexo" id="femenino" value="femenino"> Femenino
                                 </label>
                               </div>
                             </div>
                             <div class="form-group mb-4">
-                              <label for="user" class="font-weight-bold">Usuario</label>
-                              <input class="form-control bg-grey" id="user" name="user" placeholder="Ingrese el nombre de usuario">
-                            </div>
-                            <div class="form-group mb-4">
-                              <label for="pass" class="font-weight-bold">Contraseña</label>
-                              <input type="password" class="form-control bg-grey" id="pass" name="pass" placeholder="Ingrese la contraseña">
+                              <label for="fecha_nac" class="font-weight-bold">Fecha de nacimiento</label>
+                              <input class="form-control bg-grey" id="fecha_nac" name="fecha_nac"
+                                placeholder="Ingrese su cedula" autocomplete="off" readonly>
                             </div>
                           </div>
-                          <button type="submit" class="btn btn-primary w-100">Registrar usuario</button>
+                          <div class="col-lg-6 my-4">
+                            <div class="form-group mb-4">
+                              <label for="apellido" class="font-weight-bold">Dirección de residencia</label>
+                              <input class="form-control bg-grey" id="direccion" name="direccion"
+                                placeholder="Ingrese su apellido">
+                            </div>
+                            <div class="form-group mb-4">
+                              <label for="apellido" class="font-weight-bold">Dirección de trabajo</label>
+                              <input class="form-control bg-grey" id="trabajo" name="trabajo"
+                                placeholder="Ingrese su apellido">
+                            </div>
+                            <div class="form-group mb-0">
+                              <label for="exampleInputEmail1" class="font-weight-bold">Resultado del examen:</label>
+                            </div>
+                            <div class="form-group mb-4">
+                              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-primary active">
+                                  <input type="radio" name="examen" id="positivo" value="positivo" checked> Positivo
+                                </label>
+                                <label class="btn btn-primary">
+                                  <input type="radio" name="examen" id="positivo" value="positivo"> Negativo
+                                </label>
+                              </div>
+                            </div>
+                            <div class="form-group mb-4">
+                              <label for="fecha_examen" class="font-weight-bold">Fecha del examen</label>
+                              <input class="form-control bg-grey" id="fecha_examen" name="fecha_examen"
+                                placeholder="Ingrese la contraseña" autocomplete="off" readonly>
+                            </div>
+                          </div>
                         </div>
+                        <button type="submit" class="btn btn-primary w-100">Registrar caso</button>
                       </form>
-                    </div> 
+                    </div>
                   </div>
                 </div>
               </div>
@@ -137,6 +171,7 @@
     </div>
   </div>
 
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -151,6 +186,23 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"
     integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
   <script src="script.js"></script>
-  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <script src="jquery/jquery.js"></script>
+  <script src="jquery/jquery.datetimepicker.full.js"></script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBZFxENpr18VouKnGzRAxHJX4aOGoAXJpY&callback=initMap"></script>
+
+  <script>
+    $("#fecha_examen").datetimepicker({
+      format: 'Y-m-d',
+      timepicker: false
+    });
+
+    $("#fecha_nac").datetimepicker({
+      format: 'Y-m-d',
+      timepicker: false
+    });
+  </script>
+
 </body>
+
 </html>
