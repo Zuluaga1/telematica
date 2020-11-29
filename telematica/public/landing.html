@@ -23,10 +23,22 @@
     var query = "SELECT  rc.examen, COUNT(rc.examen) AS Total FROM registro_caso rc GROUP by rc.examen";
     socket.emit('post',query);
 
-    var query2 = "SELECT  e.estado, COUNT(e.estado) AS Total FROM condicion c, estado e WHERE e.estado=c.idcondicion GROUP by e.estado";
+    var query2 = `SELECT  e.estado, COUNT(e.idcaso) FROM estado e
+                  INNER JOIN (SELECT idcaso, MAX(fecha) AS reciente FROM estado GROUP BY idcaso) aux 
+                  ON e.idcaso = aux.idcaso
+                  AND e.fecha = aux.reciente
+                  WHERE e.estado != 1 AND e.estado != 5
+                  GROUP BY e.estado
+                  ORDER BY e.estado`;
     socket.emit('post2',query2);
 
-    var query3 = "SELECT  e.estado, COUNT(e.estado) AS Total FROM condicion c, estado e WHERE e.estado=c.idcondicion GROUP by e.estado";
+    var query3 = `SELECT e.estado, COUNT(e.idcaso) AS Total FROM estado e
+                  INNER JOIN (SELECT idcaso, MAX(fecha) AS reciente FROM estado GROUP BY idcaso) aux 
+                  ON e.idcaso = aux.idcaso
+                  AND e.fecha = aux.reciente
+                  WHERE e.estado != 1
+                  GROUP BY e.estado
+                  ORDER BY e.estado`;
     socket.emit('post3',query3);
 
     var query4= "SELECT rc.fecha_examen, COUNT(rc.examen) AS CCR, 0 AS CM FROM registro_caso rc WHERE rc.examen='positivo' GROUP by rc.fecha_examen UNION ALL SELECT e.fecha, 0, COUNT(e.estado) FROM estado e WHERE e.estado=6 GROUP by e.fecha ORDER BY fecha_examen";
@@ -49,7 +61,7 @@
             <a class="nav-link" href="#hero">Inicio <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item mx-4">
-            <a class="nav-link" href="#stat">Estadisticas</a>
+            <a class="nav-link" href="#stat">Estadísticas</a>
           </li>
         </ul>
       </div>
@@ -79,14 +91,16 @@
   <section id="stat" class="section-index bg-grey">
     <div class="container">
       <div class="heading-title">
-        <h2>Estadisticas</h2>
-        <p class="lead mt-3 mb-5">Aqui aparecen las graficas de los casos</p>
+        <h2>Estadísticas</h2>
+        <p class="lead mt-3 mb-5">A continuación, se presenta la actualización de los resultados obtenidos mediante las pruebas del
+           COVID-19 en la ciudad de Barranquilla
+        </p>
       </div>
       <div class="row">
         <div class="col-md-4">
           <div class="card">
             <div class="card-body">
-              <h4 class="mb-4 ">Gráfica del total de casos</h4>
+              <h4 class="mb-4 ">Casos positivos y negativos</h4>
               <canvas id="myChart1" style="width: 300px; height: 200px;"></canvas>
             </div>
           </div>
@@ -102,7 +116,7 @@
         <div class="col-md-4">
           <div class="card">
             <div class="card-body">
-              <h4 class="mb-4">Positivos y negativos</h4>
+              <h4 class="mb-4">Gráfica casos totales</h4>
               <canvas id="myChart3" style="width: 300px; height: 200px;"></canvas>
             </div>
           </div>
@@ -113,7 +127,7 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-body">
-              <h4 class="mb-4">Gráfica casos totales</h4>
+              <h4 class="mb-4">Gráfica casos registrados por día</h4>
               <canvas id="myChart4" style="width: 500px; height: 200px;"></canvas>
             </div>
           </div>
@@ -122,21 +136,17 @@
     </div>
   </section>
 
-  <section id="footer" class="section-index bg-primary">
+  <section id="footer" class="section-index bg-primary text-center">
     <div class="container">
-
+      <h5 class="navbar-brand font-weight-bold text-light mx-1 mb-3">COVID-19 Manager</h5>
+      <ul class="list-inline text-light">
+        <li class="list-inline-item footer-menu"><a href="#hero">Inicio</a></li>
+        <li class="list-inline-item footer-menu"><a href="#stat">Estadísticas</a></li>
+      </ul>
+      <small class="text-light">©2020 Todos los derechos reservados. 
+        Creado por Juan Márquez, Sebastian Carrillo, Esteban Zuluaga y Jesus Yepez</small>
     </div>
   </section>
-
-  <!-- Optional JavaScript; choose one of the two! -->
-
-  <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
-  <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
-    crossorigin="anonymous"></script> -->
 
   <!-- Option 2: jQuery, Popper.js, and Bootstrap JS-->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
@@ -170,9 +180,9 @@
         var myPieChart2 = new Chart(ctx2, {
         type: 'pie',
         data: {
-          labels: ["Tratamiento - Casa", "Tratamiento - Hospital", "UCI", "Muerte"],
+          labels: ["Tratamiento Casa", "Tratamiento Hospital", "UCI", "Muerto"],
           datasets: [{
-            data: [message[1], message[2], message[3], message[4]],
+            data: [message[0], message[1], message[2], message[3]],
             backgroundColor: ["#FFB600", "#FF6400", "#003EFF", "#000000"]
           }]
         },
@@ -186,9 +196,9 @@
         var myPieChart3 = new Chart(ctx3, {
         type: 'pie',
         data: {
-          labels: ["Infectado", "Muerte", "Curado"],
+          labels: ["Infectados", "Curados", "Muertos"],
           datasets: [{
-            data: [message[1]+message[2]+message[3], message[5], message[4]],
+            data: [message[0]+message[1]+message[2], message[3], message[4]],
             backgroundColor: ["#ff0000", "#000000", "#008f39"]
           }]
         },
@@ -213,26 +223,20 @@
       }
 
       var myBarChart = new Chart(ctx4, {
-        type: 'bar',
+        type: 'line',
         data: {
           labels: message,
           datasets: [{
           label: "Registrados",
-          barPercentage: 0.5,
-          barThickness: 10,
-          maxBarThickness: 8,
-          minBarLength: 2,
+          fill: false,
           data: message1,
-          backgroundColor: "#ff0000"
+          borderColor: "#ff0000"
         },
         {
           label: "Muertos",
-          barPercentage: 0.5,
-          barThickness: 10,
-          maxBarThickness: 8,
-          minBarLength: 2,
+          fill: false,
           data: message2,
-          backgroundColor: "#000000"
+          borderColor: "#000000"
         }]    
         },
         options: {
