@@ -1,180 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src='/socket.io/socket.io.js'></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <h1>LOGIN</h1>
-    <script>
-      var socket = io.connect('http://localhost:80');
-    </script>
-    <script type="text/javascript">
-
-      var query = "SELECT  rc.examen, COUNT(rc.examen) AS Total FROM registro_caso rc GROUP by rc.examen";
-      socket.emit('post',query);
-
-      var query2 = "SELECT  e.estado, COUNT(e.estado) AS Total FROM condicion c, estado e WHERE e.estado=c.idcondicion GROUP by e.estado";
-      socket.emit('post2',query2);
-
-      var query3 = "SELECT  e.estado, COUNT(e.estado) AS Total FROM condicion c, estado e WHERE e.estado=c.idcondicion GROUP by e.estado";
-      socket.emit('post3',query3);
-
-      var query4= "SELECT rc.fecha_examen, COUNT(rc.examen) AS CCR, 0 AS CM FROM registro_caso rc WHERE rc.examen='positivo' GROUP by rc.fecha_examen UNION ALL SELECT e.fecha, 0, COUNT(e.estado) FROM estado e WHERE e.estado=6 GROUP by e.fecha ORDER BY fecha_examen";
-      socket.emit('post4',query4);
-
-    </script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+    integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/ionicons@5.2.3/dist/ionicons.js"></script>
+    <script src='/socket.io/socket.io.js'></script>
+    <script src="scripts/socketio.js"></script>
+    <title>Login</title>
 </head>
-<body>
-    <form action="/login" method="post">
-      <text>Usuario: <br><input id="usuario1" name="usuarios" placeholder="Click para editar"></text><br><br>
-      <text>Contraseña: <br><input id="contraseña1" name="contraseñas" placeholder="Click para editar"></text><br><br>
-      <input type="submit" value="enviar1">
-      <input type="button" onclick="cambia_register();" value="register" />
-    </form>
-    <canvas id="myChart" style="width: 1366px; height: 200px;"></canvas>
-    <script>
-      socket.on('show', function(message) {
-        var ctx = document.getElementById('myChart');
-        var myPieChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ["Casos positivos", "Casos negativos"],
-          datasets: [{
-            data: [message[0], message[1]],
-            backgroundColor: ["#ff0000", "#008f39"]
-          }]
-        },
-        options: {
-          responsive: false,
-          title: {
-            display: true,
-            text: 'Casos',
-            lineHeight: 2,
-            fontSize: 25
-          }
-        }
-      });
-  });
-  
-    </script>
-    <canvas id="myChart2" style="width: 1366px; height: 200px;"></canvas>
-    <script>
-      socket.on('show2', function(message) {
-        var ctx2 = document.getElementById('myChart2');
-        var myPieChart2 = new Chart(ctx2, {
-        type: 'pie',
-        data: {
-          labels: ["Tratamiento - Casa", "Tratamiento - Hospital", "UCI", "Muerte"],
-          datasets: [{
-            data: [message[1], message[2], message[3], message[4]],
-            backgroundColor: ["#FFB600", "#FF6400", "#003EFF", "#000000"]
-          }]
-        },
-        options: {
-          responsive: false,
-          title: {
-            display: true,
-            text: 'Infectados',
-            lineHeight: 2,
-            fontSize: 25
-          }
-        }
-      });
-  });
-  
-    </script>
-    </script>
-    <canvas id="myChart3" style="width: 1366px; height: 200px;"></canvas>
-    <script>
-      socket.on('show3', function(message) {
-        var ctx3 = document.getElementById('myChart3');
-        var myPieChart3 = new Chart(ctx3, {
-        type: 'pie',
-        data: {
-          labels: ["Infectado", "Muerte", "Curado"],
-          datasets: [{
-            data: [message[1]+message[2]+message[3], message[5], message[4]],
-            backgroundColor: ["#ff0000", "#000000", "#008f39"]
-          }]
-        },
-        options: {
-          responsive: false,
-          title: {
-            display: true,
-            text: 'Casos totales',
-            lineHeight: 2,
-            fontSize: 25
-          }
-        }
-      });
-  });
-  
-    </script>
-    <canvas id="myChart4" style="width: 500px; height: 300px;"></canvas>
-    <script>
-    socket.on('show4', function(message) {
-    socket.on('show5', function(message1){
-    socket.on('show6', function(message2){
-      for (let i = 0; i < message.length; i++) {
-        var lqws = message[i];
-        if (lqws== message[i+1]){
-            message1.splice(i+1,1)
-            message2.splice(i,1)
-            message.splice(i,1)
-          }
-      }
-    var ctx4 = document.getElementById('myChart4');
-    var myBarChart = new Chart(ctx4, {
-      type: 'line',
-      data: {
-        labels: message,
-        datasets: [{
-        label: "Registrados",
-        fill:false,
-        data: message1,
-        borderColor: "#ff0000"
-    },
-    {
-        label: "Muertos",
-        fill:false,
-        data: message2,
-        borderColor: "#000000"
-    }]
-        
-      },
-      options: {
-        title: {
-            display: true,
-            text: 'Casos totales',
-            lineHeight: 2,
-            fontSize: 25
-          },
-          responsive:false,
-        scales: {
-        yAxes:[{
-          scaleStepWidth:1
-        }],
-          
-        xAxes: [{
-            gridLines: {
-                offsetGridLines: true
-            }
-        }]
-    }
-        
-      }
-    });
-  });
-  });
-  });
-    </script>
-    <script src="script.js"></script>
+<body class="bg-primary">
+  <section>
+    <div class="row no-gutters">
+        <div class="col-lg-7 d-none d-lg-block">
+            <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                  <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+                  <li data-target="#carouselExampleCaptions" data-slide-to="1"></li>
+                </ol>
+                <div class="carousel-inner">
+                  <div class="carousel-item img-1 min-vh-100 active">
+                    <div class="carousel-caption d-none d-md-block">
+                    </div>
+                  </div>
+                  <div class="carousel-item img-2 min-vh-100">
+                    <div class="carousel-caption d-none d-md-block">
+                    </div>
+                  </div>
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="sr-only">Next</span>
+                </a>
+              </div>
+        </div>
+        <div class="col-lg-5 bg-primary d-flex flex-column align-items-end min-vh-100">
+            <div class="text-light px-lg-5 pt-lg-4 pb-lg-3 p-4 mb-auto w-100">
+              <h5><a class="text-light text-muted text-decoration-none font-weight-bold" href="/">COVID-19 Manager</a></h5>  
+            </div>
+            <div class="text-light align-self-center w-100 px-lg-5 py-lg-4 p-4">
+            <h1 class="font-weight-bold mb-4">Bienvenido</h1>
+              <form id="formLogin" action="/login" method="post" class="mb-5" >
+                <div class="mb-4">
+                  <label for="exampleInputEmail1" class="form-label font-weight-bold">Usuario</label>
+                  <input class="form-control border-0" name="usuarios" id="usuarios" placeholder="Ingresa tu usuario">
+                </div>
+                <div class="mb-4">
+                  <label for="exampleInputPassword1" class="form-label font-weight-bold">Contraseña</label>
+                  <input type="password" class="form-control border-0 mb-2" name="contraseñas" id="contraseñas" placeholder="Ingresa tu contraseña">
+                </div>
+                <button type="submit" class="btn btn-secondary w-100">Iniciar sesión</button>
+              </form> 
+            </div>
+            <div class="text-light text-center px-lg-5 pt-lg-3 pb-lg-4 p-4 mt-auto w-100">
+                <p class="d-inline-block mb-0">¿Todavía no tienes una cuenta? Comunicate con el administrador para crear la cuenta</p>
+            </div>
+        </div>
+    </div>
+  </section>
+    <script src="scripts/login.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 </body>
 </html>
+
