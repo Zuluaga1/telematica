@@ -1,6 +1,6 @@
 //Pestaña general
 
-//initMap();
+initMap();
 casos();
 
 var map;
