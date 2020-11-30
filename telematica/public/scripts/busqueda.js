@@ -1,4 +1,4 @@
-//initMap();
+initMap();
 var map;
 var geocoder;
 
