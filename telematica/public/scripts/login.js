@@ -1,6 +1,3 @@
-//Socket.io
-socket = io.connect('http://localhost:80');
-
 //Login check
 if (document.getElementById('formLogin') != undefined) {
     const formLogin = document.getElementById('formLogin')
@@ -46,7 +43,7 @@ socket.on('loginCheck', function(message) {
     } else {
         swal({
             title: "ERROR!",
-            text: "El usuario ingresado es incorrecto. Intente de nuevo",
+            text: "El usuario o la contraseña ingresada son incorrectos. Intente de nuevo",
             icon: "warning",
         });
     }

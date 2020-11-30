@@ -27,7 +27,7 @@ if (document.getElementById('formCase') != undefined) {
     const formCase = document.getElementById('formCase')
     formCase.addEventListener('submit', (e) =>{
         e.preventDefault();
-        let form = e.target
+        form = e.target
         nombre = e.target.elements.nombre.value;
         apellido = e.target.elements.apellido.value;
         cedula = e.target.elements.cedula.value;
@@ -45,13 +45,25 @@ if (document.getElementById('formCase') != undefined) {
                 icon: "warning",
             });
         } else {
-            swal({
-                title: "HECHO!",
-                text: "El registro del caso se ha realizado correctamente!",
-                icon: "success",
+            var query = `SELECT * FROM registro_caso rc
+                        WHERE rc.cedula = '${cedula}'`
+            socket.emit('verificacionRegistroCaso', query);
+            socket.on('checkRegistroCaso', function(message) {
+                if (message.length > 0) {
+                    swal({
+                        title: "ERROR!",
+                        text: `Ya hay una persona registrada con el número de cedúla ingresado. Puede consultar su estado actual en la pestaña de "Obtener Caso" `,
+                        icon: "warning",
+                    });
+                } else {
+                    swal({
+                        title: "HECHO!",
+                        text: "El caso ha sido registrado correctamente!",
+                        icon: "success",
+                    });
+                    form.submit()
+                }  
             });
-            form.submit()
-            document.forms['formCase'].reset()
         }
     });
 } else {

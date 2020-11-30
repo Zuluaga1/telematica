@@ -8,7 +8,7 @@ if (document.getElementById('formAdmin') != undefined) {
         cedula = e.target.elements.cedula.value;
         user = e.target.elements.user.value;
         pass = e.target.elements.pass.value;
-        let form = e.target
+        form = e.target;
         if (nombre == "" || apellido == "" || cedula == "" || user == "" || pass == "" ) {
             swal({
                 title: "ERROR!",
@@ -16,13 +16,25 @@ if (document.getElementById('formAdmin') != undefined) {
                 icon: "warning",
             });
         } else {
-            swal({
-                title: "HECHO!",
-                text: "El usuario ha sido registrado correctamente!",
-                icon: "success",
+            var query = `SELECT * FROM user u
+                        WHERE u.cedula = '${cedula}' OR u.usuario = '${user}'`
+            socket.emit('verificacionRegistro', query);
+            socket.on('checkRegistro', function(message) {
+                if (message.length > 0) {
+                    swal({
+                        title: "ERROR!",
+                        text: "El usuario o el número de cedula ingresada ya existen. Intente otra vez",
+                        icon: "warning",
+                    });
+                } else {
+                    swal({
+                        title: "HECHO!",
+                        text: "El usuario ha sido registrado correctamente!",
+                        icon: "success",
+                    });
+                    form.submit()
+                }   
             });
-            form.submit()
-            document.forms['formAdmin'].reset()
         }
     });
 } else {

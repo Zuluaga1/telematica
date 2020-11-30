@@ -39,19 +39,65 @@ database.connect((err) => {
     console.log('Mysql Connected...');
 });
 
+
 //Landing page
 app.get('/', (request, response) => {
+    request.session.loggedin = false;
+    request.session.loggedin1 = false;
+    request.session.loggedin2 = false;
     response.sendFile(path.join(__dirname + '/public/landing.html'));
 });
 
+//Login
 app.get('/login', (request, response) => {
     response.sendFile(path.join(__dirname + '/public/login.html'));
 });
 
-//dirección para el logeo
-app.get('/acceder', function(request, response) {
-    response.sendFile(path.join(__dirname + '/public/login.html'));
+//Admin
+app.get('/admin', function(request, response) {
+	if (request.session.loggedin2) {
+        return response.sendFile(path.join(__dirname + '/public/admin.html'));
+	} else {
+        return response.sendFile(path.join(__dirname + '/public/login.html'));
+	} 
 });
+
+//Ayudante (Registro caso)
+app.get('/registro_caso', function(request, response) {
+	if (request.session.loggedin1) {
+        return response.sendFile(path.join(__dirname + '/public/registro_caso.html'));
+	} else {
+        return response.sendFile(path.join(__dirname + '/public/login.html'));
+	} 
+});
+
+//Ayudante (Obtener caso)
+app.get('/obtener_caso', function(request, response) {
+	if (request.session.loggedin1) {
+        return response.sendFile(path.join(__dirname + '/public/obtener_caso.html'));
+	} else {
+        return response.sendFile(path.join(__dirname + '/public/login.html'));
+	} 
+});
+
+//Medico (General)
+app.get('/general', function(request, response) {
+	if (request.session.loggedin) {
+        return response.sendFile(path.join(__dirname + '/public/general.html'));
+	} else {
+        return response.sendFile(path.join(__dirname + '/public/login.html'));
+	}
+});
+
+//Medico (Busqueda)
+app.get('/busqueda', function(request, response) {
+	if (request.session.loggedin) {
+        return response.sendFile(path.join(__dirname + '/public/busqueda.html'));
+	} else {
+        return response.sendFile(path.join(__dirname + '/public/login.html'));
+	}
+});
+
 
 app.post('/form', (req, res) => {
     database.connect(function(err) {
@@ -98,7 +144,7 @@ app.post('/login', (req, res) => {
                 } else if (username == results[0].usuario && password ==results[0].contraseña && ayudante == results[0].rol) {
                     req.session.loggedin1 = true;
                     req.session.username = username;
-                    res.redirect('/ayudante');
+                    res.redirect('/registro_caso');
                 } else if (username ==results[0].usuario && password ==results[0].contraseña && medico == results[0].rol){
                     req.session.loggedin = true;
                     req.session.username = username;
@@ -113,40 +159,6 @@ app.post('/login', (req, res) => {
             }
         });
     }
-});
-
-
-app.get('/admin', function(request, response) {
-	if (request.session.loggedin2) {
-        return response.sendFile(path.join(__dirname + '/public/admin.html'));
-	} else {
-        return response.sendFile(path.join(__dirname + '/public/login.html'));
-	} 
-});
-
-app.get('/ayudante', function(request, response) {
-	if (request.session.loggedin1) {
-        return response.sendFile(path.join(__dirname + '/public/registro_caso.html'));
-	} else {
-        return response.sendFile(path.join(__dirname + '/public/login.html'));
-	} 
-});
-
-
-app.get('/logeado_ayudante', function(request, response) {
-	if (request.session.loggedin1) {
-        return response.sendFile(path.join(__dirname + '/public/registro.html'));
-	} else {
-        return response.sendFile(path.join(__dirname + '/public/login.html'));
-	} 
-});
-
-app.get('/general', function(request, response) {
-	if (request.session.loggedin) {
-        return response.sendFile(path.join(__dirname + '/public/general.html'));
-	} else {
-        return response.sendFile(path.join(__dirname + '/public/login.html'));
-	}
 });
 
 
@@ -188,18 +200,6 @@ app.post('/logeado_ayudante', (req, res) => {
         }
     });
     res.status(204).send();
-});
-
-app.get('/gest_caso', function(request, response) {
-    
-    if (request.session.loggedin) {
-        return response.sendFile(path.join(__dirname + '/public/gest_caso.html'));
-        
-	} else {
-        return response.sendFile(path.join(__dirname + '/public/login.html'));
-	}
-	response.end();
-    //console.log(__dirname + '/public/login.html')
 });
 
 app.post('/gest_caso', (req, res) => {
@@ -275,6 +275,22 @@ io.on('connection', socket => {
                 socket.emit("loginCheck", results)
             });
         }
+    });
+
+    socket.on('verificacionRegistro', msg => {
+        let sql = msg;
+        let query = database.query(sql, (err, results) => {
+            if (err) throw err;
+            socket.emit("checkRegistro", results)
+        });
+    });
+
+    socket.on('verificacionRegistroCaso', msg => {
+        let sql = msg;
+        let query = database.query(sql, (err, results) => {
+            if (err) throw err;
+            socket.emit("checkRegistroCaso", results)
+        });
     });
 
     socket.on('post', msg => {

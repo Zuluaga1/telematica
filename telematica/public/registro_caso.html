@@ -10,6 +10,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;600&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css" rel="stylesheet">
   <link rel="stylesheet" href="jquery/jquery.datetimepicker.min.css">
+  <script src='/socket.io/socket.io.js'></script>
+  <script src="scripts/socketio.js"></script>
   <title>Ayudante</title>
 </head>
 
@@ -21,9 +23,9 @@
         <h4 class="text-light font-weight-bold mb-0">COVID-19 Manager</h4>
       </div>
       <div class="menu">
-        <a href="/registro_caso.html" class="d-block text-light p-3 border-0"><i class="icon ion-md-apps lead mr-2"></i>
+        <a href="/registro_caso" class="d-block text-light p-3 border-0"><i class="icon ion-md-apps lead mr-2"></i>
           Registro de casos</a>
-        <a href="/obtener_caso.html" class="d-block text-light p-3 border-0"><i
+        <a href="/obtener_caso" class="d-block text-light p-3 border-0"><i
             class="icon ion-md-people lead mr-2"></i>
           Obtener caso</a>
       </div>
@@ -49,7 +51,7 @@
                   Usuario
                 </a>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="/landing.html">Cerrar sesión</a>
+                  <a class="dropdown-item" href="/">Cerrar sesión</a>
                 </div>
               </li>
             </ul>

@@ -15,13 +15,14 @@
   <script src="https://www.gstatic.com/charts/loader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
   <script src='/socket.io/socket.io.js'></script>
+  <script src="scripts/socketio.js"></script>
   <title>COVID-19 Manager</title>
 </head>
 
 <body>
   <nav class="navbar navbar-expand-lg bg-primary fixed-top">
     <div class="container">
-      <a class="navbar-brand font-weight-bold" href="/landing.html">COVID-19 Manager</a>
+      <a class="navbar-brand font-weight-bold" href="/">COVID-19 Manager</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -48,7 +49,7 @@
           <h1 class="text-light display-4">Bienvenido a COVID-19 Manager</h1>
           <p class="text-light lead mt-4">Este gestor está desarrollado para registrar los resultados de las pruebas
             realizadas del COVID-19 para la ciudad de Barranquilla.</p>
-          <a href="login.html" class="btn btn-secondary mt-5">Inciar sesión <ion-icon name="arrow-forward-outline" class="ml-2 align-middle"></ion-icon></a>
+          <a href="/login" class="btn btn-secondary mt-5">Inciar sesión <ion-icon name="arrow-forward-outline" class="ml-2 align-middle"></ion-icon></a>
           </div>
         </div>
         <div class="col-lg-5 offset-lg-1 col-sm-7 d-flex mt-3">
@@ -110,7 +111,7 @@
 
   <section id="footer" class="section-index bg-primary text-center">
     <div class="container">
-      <h5 class="navbar-brand font-weight-bold text-light mx-1 mb-3">COVID-19 Manager</h5>
+      <h4 class="navbar-brand font-weight-bold text-light mx-1 mb-3">COVID-19 Manager</h4>
       <ul class="list-inline text-light">
         <li class="list-inline-item footer-menu"><a href="#hero">Inicio</a></li>
         <li class="list-inline-item footer-menu"><a href="#stat">Estadísticas</a></li>

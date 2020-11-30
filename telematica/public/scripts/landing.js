@@ -1,6 +1,3 @@
-//Socket.io
-socket = io.connect('http://localhost:80');
-
 //Solicitudes a la DB
 //1. Casos positivos y negativos
 var query = "SELECT  rc.examen, COUNT(rc.examen) AS Total FROM registro_caso rc GROUP by rc.examen";
