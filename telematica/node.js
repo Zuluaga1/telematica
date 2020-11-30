@@ -391,6 +391,6 @@ io.on('connection', socket => {
 
 });
 
-server.listen(80, () => {
-    console.log("Servidor abierto en puerto 80");
+server.listen(15002, () => {
+    console.log("Servidor abierto en puerto 15002");
 });

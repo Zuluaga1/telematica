@@ -94,7 +94,7 @@ socket.on('show3', function(message) {
       }]
     },
     options: {
-      responsive: false
+      responsive: true
     }
   });
 });
