@@ -110,8 +110,11 @@ socket.on('show4', function(msg) {
     var lqws = message[i];
     if (lqws== message[i+1]){
         message1.splice(i+1,1)
+        console.log(message1)
         message2.splice(i,1)
+        console.log(message2)
         message.splice(i,1)
+        console.log(message)
       }
   }
 

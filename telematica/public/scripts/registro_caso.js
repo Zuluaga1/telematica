@@ -38,7 +38,7 @@ if (document.getElementById('formCase') != undefined) {
         examen = e.target.elements.examen.value
         fecha_examen = e.target.elements.fecha_examen.value
         
-        if (nombre == "" || apellido == "" || cedula == "" || fecha_nac == "" || fecha_nac == "" || direccion == "" || trabajo == "" || fecha_examen == ""){
+        if (nombre == "" || apellido == "" || cedula == "" || fecha_nac == "" || direccion == "" || trabajo == "" || fecha_examen == ""){
             swal({
                 title: "ERROR!",
                 text: "Todos los campos deben ser ingresados",

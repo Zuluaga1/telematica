@@ -20,15 +20,16 @@ app.use(session({
 }));
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
+require('dotenv').config();
 
 
 // Credentials for connecting the database
 const database = mysql.createConnection({
-    host: "covid.cvsabxwakxjs.us-east-1.rds.amazonaws.com",
-    user: "ADDBPFT",
-    password: "pftele08",
-    database: "covid",
-    port:   "3306"
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: process.env.DB_DB,
+    port: process.env.DB_PORT
 });
  
 //connect
@@ -378,7 +379,6 @@ io.on('connection', socket => {
                 coord5.push(val2);
                 coord6.push(val3);
             }
-                console.log(coord4);
                 var arrayPost4 = [];
                 arrayPost4.push(coord4);
                 arrayPost4.push(coord5);
